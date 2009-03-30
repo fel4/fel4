@@ -1,0 +1,4 @@
+Shard TODO:
+
+2. Start porting everything that doesn't have to be assembly over to C.
+6. Breakout kernel into parts and convert to L4.
