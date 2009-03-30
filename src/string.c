@@ -7,7 +7,11 @@
 int strlen(const char *str)
 {
   int i;
-  for (i=0;;i++) if (str[i] == '\0') return i;
+  for (i=0;;i++) {
+    if (str[i] == '\0') {
+      return i;
+    }
+  }
 }
 
 /* We can use this for reading from the I/O ports to get data from
@@ -33,25 +37,23 @@ void outportb (unsigned short _port, unsigned char _data)
 BASE is equal to 'd', interpret that D is decimal, and if BASE is
 ]equal to 'x', interpret that D is hexadecimal. */
 static void
-itoa (char *buf, int base, int d)
-{
+itoa (char *buf, int base, int d) {
   char *p = buf;
   char *p1, *p2;
   unsigned long ud = d;
   int divisor = 10;
   
   /* If %d is specified and D is minus, put `-' in the head. */
-  if (base == 'd' && d < 0)
-  {
+  if (base == 'd' && d < 0) {
     *p++ = '-';
     buf++;
     ud = -d;
   }
-  else if (base == 'x')
-    divisor = 16;                                                                                                                                                           
+  else if (base == 'x') {
+    divisor = 16;
+  }
   /* Divide UD by DIVISOR until UD == 0. */
-  do
-  {
+  do {
     int remainder = ud % divisor;
     
     *p++ = (remainder < 10) ? remainder + '0' : remainder + 'a' - 10;
@@ -62,8 +64,7 @@ itoa (char *buf, int base, int d)
   /* Reverse BUF. */
   p1 = buf;
   p2 = p - 1;
-  while (p1 < p2)
-  {
+  while (p1 < p2) {
     char tmp = *p1;
     *p1 = *p2;
     *p2 = tmp;
@@ -74,26 +75,21 @@ itoa (char *buf, int base, int d)
 
 /* Format a string and print it on the screen, just like the libc
 function printf. */
-void
-kprintf (const char *format, ...)
-{
+void kprintf (const char *format, ...) {
   char **arg = (char **) &format;
   int c;
   char buf[20];
   
   arg++;
   
-  while ((c = *format++) != 0)
-  {
-    if (c != '%')
+  while ((c = *format++) != 0) {
+    if (c != '%') {
       putch (c);
-    else
-    {
+    } else {
       char *p;
       
       c = *format++;
-      switch (c)
-      {
+      switch (c) {
         case 'd':
         case 'u':
         case 'x':
@@ -104,18 +100,19 @@ kprintf (const char *format, ...)
           
         case 's':
           p = *arg++;
-          if (! p)
+          if (! p) {
             p = "(null)";
+          }
           
         string:
-          while (*p)
+          while (*p) {
             putch (*p++);
+          }
           break;
             
         default:
           putch (*((int *) arg++));
           break;
-          
       }
     }
   }
