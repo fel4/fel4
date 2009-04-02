@@ -1,1 +1,68 @@
 TODO: Write Docs!
+
+==  Building a shard bootable image ==
+
+( this section is adapted from writingkernels.txt, with updates on setting up
+the image to boot shard specifically )
+
+Packages Required: ( sudo apt-get install <package> ) on ubuntu systems.
+
+* mtools
+* grub
+* qemu
+
+=== Setting up the environment ===
+
+First, we need to tell the mtools package where the shard image is
+going to be located.
+From the root of the shard repository:
+ $ export SHARD_IMAGE=`pwd`/shard.img
+ $ echo "drive c: file=\"$SHARD_IMAGE\" partition=1" > ~/.mtoolsrc
+
+=== Creating the image ===
+
+Next, we need to create an empty image to write to, then provide its dimensions
+so that emulators will think its really a hard disk, and finally format the
+image and build the directory structure.
+
+ $ dd if=/dev/zero of=$SHARD_IMAGE count=088704 bs=512
+ $ mpartition -I c:
+ $ mpartition -c -t 88 -h 16 -s 63 c:
+ $ mformat c:
+ $ mmd c:/boot
+ $ mmd c:/boot/grub
+
+=== Installing grub to the image ===
+
+Now, we need to copy over the grub files into the image so that grub can use
+them when it boots. After that, we need to actually install grub onto the
+image.
+
+ $ mcopy /boot/grub/stage1 c:/boot/grub
+ $ mcopy /boot/grub/stage2 c:/boot/grub
+ $ mcopy /boot/grub/fat_stage1_5 c:/boot/grub
+ $ echo "(hd0) $SHARD_IMAGE" > bmap
+ $ printf "geometry (hd0) 88 16 63 \n root (hd0,0) \n setup (hd0)\n" | /usr/sbin/grub --device-map=bmap  --batch
+
+=== Adding a grub menu ===
+
+We next add a minimal grub menu by copying the menu.lst from doc/ directory 
+into the image.
+ 
+ $ cd <path_to_shard_repo>/doc
+ $ mcopy menu.lst  c:/boot/grub/
+
+=== Installing the shard kernel ===
+
+To install shard into the image, simply build the kernel and run the 'install'
+rule from the Makefile.
+
+ $ cd <path_to_shard_repo>/src
+ $ make; make install
+
+=== Running the shard kernel under Qemu ===
+
+To test the newly built shard kernel, simply run Qemu and specify the image as
+hda.
+
+ $ qemu -hda $SHARD_IMAGE

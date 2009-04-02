@@ -24,7 +24,7 @@ start.o: start.asm
 clean:
 	rm -f *.o *.bin
 
-install:
+install: kernel.bin
 	@echo "Installing kernel to QEMU image"
 	@mdel c:/boot/grub/kernel.bin
 	@mcopy kernel.bin c:/boot/grub/
