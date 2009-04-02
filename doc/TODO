@@ -1,4 +1,5 @@
 Shard TODO:
 
-2. Start porting everything that doesn't have to be assembly over to C.
-6. Breakout kernel into parts and convert to L4.
+1. Get protected mode working so we can start doing actually interesting things.
+2. Figure out what the fuck you actually want to do with this damn thing.
+
