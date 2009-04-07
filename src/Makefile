@@ -7,7 +7,7 @@ OBJS := $(patsubst %.c, %.o, $(SRCS))
 
 all: kernel.bin
 
-kernel.bin: start.o $(OBJS)
+kernel.bin: start.o klib.o $(OBJS)
 	ld -T link.ld -m elf_i386 -o kernel.bin $^
 	@echo Done!
 
@@ -19,7 +19,10 @@ kernel.bin: start.o $(OBJS)
 #
 
 start.o: start.asm
-	nasm  -f elf -o start.o start.asm
+	nasm -f elf -o start.o start.asm
+
+klib.o: klib.asm
+	nasm -f elf -o klib.o klib.asm
 
 clean:
 	rm -f *.o *.bin

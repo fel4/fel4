@@ -7,9 +7,9 @@
 ; are disabled at this point.
 [BITS 32]
 global start
+global set_gdt
 start:
     mov esp, _sys_stack     ; This points the stack to our new stack area
-    call init_real_mode
     jmp stublet
 
 ; This part MUST be 4byte aligned, so we solve that issue using 'ALIGN 4'
@@ -27,9 +27,19 @@ mboot:
   dd MULTIBOOT_HEADER_FLAGS
   dd MULTIBOOT_CHECKSUM
 
-; This section 
-init_real_mode:
+; this descriptor stores the location and size of the Global Descriptor Table,
+; and is used in the following function
+gdtr:
+  dw 0 ; the limit, or size of thr Global Descriptor Table
+  dd 0 ; the offset, or location of the Global Descriptor Table
 
+SECTION .text
+set_gdt:  
+  mov eax, [esp + 4]
+  mov [gdtr + 2], eax
+  mov ax, [esp + 8]
+  mov [gdtr], ax
+  lgdt [gdtr]
 ret
 
 ; A call to main (the C kernel) followed by an infinite loop (jmp $)
