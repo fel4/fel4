@@ -8,6 +8,7 @@
 [BITS 32]
 global start
 global set_gdt
+global set_idt
 start:
     mov esp, _sys_stack     ; This points the stack to our new stack area
     jmp stublet
@@ -31,15 +32,27 @@ mboot:
 ; and is used in the following function
 gdtr:
   dw 0 ; the limit, or size of thr Global Descriptor Table
-  dd 0 ; the offset, or location of the Global Descriptor Table
+  dd 0 ; the offset, or location of the Global Descriptor Tablea
+
+idtr:
+  dw 0 ; the size of the Interrupt Descriptor Table
+  dd 0 ; the location of the Interrupt Descriptor Table
 
 SECTION .text
 set_gdt:  
-  mov eax, [esp + 4]
-  mov [gdtr + 2], eax
-  mov ax, [esp + 8]
-  mov [gdtr], ax
-  lgdt [gdtr]
+  mov eax, [esp + 4] ; copy the address of the gdt into eax.
+  mov [gdtr + 2], eax ; copy the address to the location part of the gdtr struct.
+  mov ax, [esp + 8] ; copy the size of the global descriptor table into ax
+  mov [gdtr], ax ; copy the size to the size part of the gdtr struct
+  lgdt [gdtr] ; load the global descriptor table
+ret
+
+set_idt:  
+  mov eax, [esp + 4] ; copy the address of the idt into eax.
+  mov [idtr + 2], eax ; copy the address to the location part of the idtr struct.
+  mov ax, [esp + 8] ; copy the size of the idt into ax
+  mov [idtr], ax ; copy the size to the size part of the idtr struct
+  lidt [idtr] ; load the global descriptor table
 ret
 
 ; A call to main (the C kernel) followed by an infinite loop (jmp $)

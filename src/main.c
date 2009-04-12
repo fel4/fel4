@@ -1,32 +1,22 @@
 //////////////////////////////////////////////////////////////////////
 // File: main.c
 #include <gdt.h>
+#include <idt.h>
 #include <multiboot.h>
 #include <system.h>
 
 #define VERSION "version v0.00"
 
 extern gdt_entry_t gdt[5];
+extern idt_entry_t idt[NUM_INTERRUPTS];
 
 /* Check if the bit BIT in FLAGS is set. */
 #define CHECK_FLAG(flags,bit)   ((flags) & (1 << (bit)))
 
 /* function prototype for set_gdt ( defined in start.asm ) */
-void set_gdt(unsigned long gdt_addr, unsigned int gdt_length);
-
-static void dump_memory_maps(unsigned long addr, unsigned int count) {
-
-  int i = 0;
-  memory_map_t *current = (memory_map_t *)addr;
-
-  for ( i = 0; i < count; i++ ) {
-    kprintf("map is %s\n", ( current->type == 1 ) ? "available" : "unavailble");
-    kprintf("\tbase_low = %d, base_high = %d\n\tlength_low = %d,length_high = %d\n",
-            current->base_addr_low, current->base_addr_high,
-            current->length_low, current->length_high);
-    current++;
-  }
-}
+extern void set_gdt(unsigned long gdt_addr, unsigned int gdt_length);
+extern void exception_stub();
+extern void interrupt_stub();
 
 /* This is a very simple main() function. All it does is print stuff
 *  and then sit in an infinite loop. This will be like our 'idle'
@@ -77,19 +67,21 @@ cmain (unsigned long magic, unsigned long addr)
     kprintf("mmap_length = %d\nmmap_addr = 0x%u\n",
             mbi->mmap_length, mbi->mmap_addr);
     kprintf("found %d memory maps.\n\n", mbi->mmap_length / sizeof(memory_map_t) );
-    /*dump_memory_maps( mbi->mmap_addr, mbi->mmap_length / sizeof(memory_map_t) );*/
   }
 
   /* setup the global descriptor table. */
   kprintf("Attempting to setup the GDT\n");
   set_gdt((unsigned long)gdt, sizeof(gdt));
 
+  init_idt(idt, interrupt_stub, NUM_INTERRUPTS); // setup the IDT table.
+  init_idt(idt, exception_stub, NUM_INTERRUPTS / 16); // setup the exceptions
+
   /* print a welcome message. */
   kprintf("shard kernel\n%s\n\nWelcome to Shard!\n", VERSION);
 
 
   /* ...and leave this loop in. Note: there is an endless loop in
-  *  'start.asm' also, if you accidentally delete this next line */
+   *  'start.asm' also, if you accidentally delete this next line */
   for (;;);
 }
 //////////////////////////////////////////////////////////////////////                                                         

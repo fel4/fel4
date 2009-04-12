@@ -2,7 +2,7 @@
 #terminal --timeout=0 serial console
 
 default 0
-timeout = 0
+timeout = 2
 title = shard kernel
 kernel=/boot/grub/kernel.bin
 #module=/boot/grub/additional_modules

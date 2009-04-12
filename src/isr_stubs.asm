@@ -1,7 +1,5 @@
 ; Assembly stubs for Interrupt Service Routines
 [BITS 32]
-
-
 global exception_stub
 global interrupt_stub
 

@@ -1,9 +1,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; klib.asm
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This file contains assembly functions too allow the rest of the kernel to be
+; This file contains assembly functions to allow the rest of the kernel to be
 ; written in C.
 
+[BITS 32]
 global enable_interrupts
 global enable_nmi
 global disable_interrupts
