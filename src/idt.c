@@ -1,4 +1,4 @@
-#include <idt.h>
+#include <system.h>
 
 idt_entry_t idt[NUM_INTERRUPTS]; /* declared here, initialzed in init_idt() */
 

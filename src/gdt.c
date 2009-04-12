@@ -1,4 +1,4 @@
-#include <gdt.h>
+#include <system.h>
 
 gdt_entry_t gdt[5] = {
   /* null descriptor */

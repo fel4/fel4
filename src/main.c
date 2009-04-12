@@ -1,7 +1,5 @@
 //////////////////////////////////////////////////////////////////////
 // File: main.c
-#include <gdt.h>
-#include <idt.h>
 #include <multiboot.h>
 #include <system.h>
 
