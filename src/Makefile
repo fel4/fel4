@@ -1,5 +1,4 @@
-#CFLAGS  := -fno-stack-protector -fno-builtin -nostdinc -O -g -Wall -I. -m32
-CFLAGS  := -fno-stack-protector -ffreestanding -O -g -Wall -I. -m32
+CFLAGS  := -ffreestanding -fno-stack-protector -fno-builtin -nostdinc -O -g -Wall -I. -m32
 LDFLAGS := -nostdlib -Wl,-N -Wl,-Ttext -Wl,100000 -m elf-i386
 
 SRCS := $(wildcard *.c)

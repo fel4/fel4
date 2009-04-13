@@ -9,9 +9,6 @@
 global start
 global set_gdt
 global set_idt
-start:
-    mov esp, _sys_stack     ; This points the stack to our new stack area
-    jmp stublet
 
 ; This part MUST be 4byte aligned, so we solve that issue using 'ALIGN 4'
 ALIGN 4
@@ -39,6 +36,9 @@ idtr:
   dd 0 ; the location of the Interrupt Descriptor Table
 
 SECTION .text
+start:
+    mov esp, _sys_stack     ; This points the stack to our new stack area
+    jmp stublet
 set_gdt:  
   mov eax, [esp + 4] ; copy the address of the gdt into eax.
   mov [gdtr + 2], eax ; copy the address to the location part of the gdtr struct.

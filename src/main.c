@@ -1,5 +1,6 @@
-//////////////////////////////////////////////////////////////////////
-// File: main.c
+/* 
+ * main.c - C entry point for kernel
+ */
 #include <multiboot.h>
 #include <system.h>
 
@@ -13,6 +14,7 @@ extern idt_entry_t idt[NUM_INTERRUPTS];
 
 /* function prototype for set_gdt ( defined in start.asm ) */
 extern void set_gdt(unsigned long gdt_addr, unsigned int gdt_length);
+extern void set_idt(unsigned long idt_addr, unsigned int idt_length);
 extern void exception_stub();
 extern void interrupt_stub();
 
@@ -71,8 +73,11 @@ cmain (unsigned long magic, unsigned long addr)
   kprintf("Attempting to setup the GDT\n");
   set_gdt((unsigned long)gdt, sizeof(gdt));
 
+  /* setup interrupts */
+  kprintf("Attempting to setup the IDT\n");
   init_idt(idt, interrupt_stub, NUM_INTERRUPTS); // setup the IDT table.
   init_idt(idt, exception_stub, NUM_INTERRUPTS / 16); // setup the exceptions
+  set_idt((unsigned long)idt, sizeof(idt));
 
   /* print a welcome message. */
   kprintf("shard kernel\n%s\n\nWelcome to Shard!\n", VERSION);
@@ -82,4 +87,3 @@ cmain (unsigned long magic, unsigned long addr)
    *  'start.asm' also, if you accidentally delete this next line */
   for (;;);
 }
-//////////////////////////////////////////////////////////////////////                                                         
