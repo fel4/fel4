@@ -10,14 +10,12 @@ extern idt_entry_t idt[NUM_INTERRUPTS];
 /* Check if the bit BIT in FLAGS is set. */
 #define CHECK_FLAG(flags,bit)   ((flags) & (1 << (bit)))
 
-/* function prototype for set_gdt ( defined in start.asm ) */
+/* assembly function prototypes ( defined in klib.asm ) */
 extern void set_gdt(unsigned long gdt_addr, unsigned int gdt_length);
 extern void set_idt(unsigned long idt_addr, unsigned int idt_length);
-extern void exception_stub();
-extern void interrupt_stub();
-
 extern void enable_interrupts();
 extern void disable_interrupts();
+extern void reload_segments();
 
 /*
  * This function performs some final arch specific initialization
@@ -27,6 +25,7 @@ void
 arch_init (unsigned long magic, unsigned long addr)
 {
   multiboot_info_t *mbi;
+  gdt_entry_t *new_gdt;
 
   init_video();
 
@@ -72,15 +71,22 @@ arch_init (unsigned long magic, unsigned long addr)
   }
 
   /* setup the global descriptor table. */
+  kprintf("GDT table size: %d, GDT entry size: %d\n", sizeof(gdt), sizeof(gdt_entry_t));
   kprintf("Attempting to setup the GDT\n");
   set_gdt((unsigned long)gdt, sizeof(gdt));
 
+  /* move the GDT to its real location.*/
+  kprintf("moving the GDT to its permanent location\n");
+  new_gdt = (gdt_entry_t*)memcpy((unsigned char*)0x800, (const unsigned char*)gdt, sizeof(gdt));
+  set_gdt((unsigned long)new_gdt, sizeof(gdt));
+
   /* setup interrupts */
   kprintf("Attempting to setup the IDT\n");
-  init_idt(idt, interrupt_stub, NUM_INTERRUPTS); // setup the IDT table.
-  init_idt(idt, exception_stub, NUM_INTERRUPTS / 16); // setup the exceptions
+  init_idt(); // setup the IDT table.
   set_idt((unsigned long)idt, sizeof(idt));
 
-  //enable_interrupts();
-  //kprintf("\nenabled interrupts.\n");
+  reload_segments();
+
+  enable_interrupts();
+  kprintf("\nenabled interrupts.\n");
 }

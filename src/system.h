@@ -4,6 +4,8 @@
 #ifndef __SYSTEM_H
 #define __SYSTEM_H
 
+#define NULL (void*)0
+
 /* MEMORY.C */
 extern unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count);
 extern unsigned char *memset(unsigned char *dest, unsigned char val, int count);
@@ -43,8 +45,8 @@ typedef struct {
    unsigned short offset_2; // offset bits 16..31
 } idt_entry_t;
 
-extern void init_idt(idt_entry_t table[], void (*def_handler)(void), int count);
-extern void set_handler(idt_entry_t table[], int inter_num, void (*handler)(void));
+extern void init_idt();
+extern void set_handler(idt_entry_t table[], int inter_num, int present, void (*handler)(void));
 
 
 #endif /* __SYSTEM_H */
