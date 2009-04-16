@@ -59,8 +59,10 @@ ret
 stublet:
   push ebx                ; push the multiboot structure
   push eax                ; push the mulitboot magic value
-  EXTERN cmain            ; start of our kernel
-  call cmain
+  EXTERN arch_init        ; do any initialization that doesn't require assembly 
+  call arch_init
+  EXTERN kernel_main      ; start of our kernel
+  call kernel_main
   jmp $
 
 ; Here is the definition of our BSS section. Right now, we'll use
