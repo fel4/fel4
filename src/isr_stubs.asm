@@ -10,11 +10,11 @@ exception_stub:
   EXTERN exception_handler
   call exception_handler
   popad
-  iret
+  iretd
 
 interrupt_stub:
   pushad
   EXTERN interrupt_handler
   call interrupt_handler
   popad
-  iret
+  iretd

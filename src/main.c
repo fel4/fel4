@@ -18,6 +18,9 @@ extern void set_idt(unsigned long idt_addr, unsigned int idt_length);
 extern void exception_stub();
 extern void interrupt_stub();
 
+extern void enable_interrupts();
+extern void disable_interrupts();
+
 /* This is a very simple main() function. All it does is print stuff
 *  and then sit in an infinite loop. This will be like our 'idle'
 *  loop */
@@ -80,7 +83,10 @@ cmain (unsigned long magic, unsigned long addr)
   set_idt((unsigned long)idt, sizeof(idt));
 
   /* print a welcome message. */
-  kprintf("shard kernel\n%s\n\nWelcome to Shard!\n", VERSION);
+  kprintf("\nshard kernel\n%s\n\nWelcome to Shard!\n", VERSION);
+
+  //enable_interrupts();
+  //kprintf("\nenabled interrupts.\n");
 
 
   /* ...and leave this loop in. Note: there is an endless loop in
