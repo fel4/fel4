@@ -1,5 +1,23 @@
 Shard TODO:
 
-1. Get protected mode working so we can start doing actually interesting things.
-2. Figure out what the fuck you actually want to do with this damn thing.
 
+1. Update global descriptor table to create code / data segments for all 4
+ ring levels. Current privledge model as follows:
+   Ring 0 -- kernel
+   Ring 1 -- Core system components &  drivers.
+   Ring 2 -- non-core system components & drivers.
+   Ring 3 -- Userspace.
+
+"Core system components & drivers" is defined as the applications that considered
+to be part of the base shard platform. 
+
+1.5. Write real documentation and steps so that other people can build and
+run the system in a test environment.
+
+2. Start working on fleshing out an ABI, API, etc. Currently, the plan is to adhere
+to the L4 api for the kernel as much as possible, and build upon that.
+
+3. Add support for booting from an ext 2/3 disk ( is it easier to build an ext3
+boot image than a fat32 one? )
+
+4. Start pondering a real feature list, a real roadmap, and a real timeline.
