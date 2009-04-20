@@ -43,9 +43,5 @@
 
 #define NUM_INTERRUPTS 256
 
-#define EXCEPT_STUB(num) exception##num##_stub
-#define INTER_STUB(num) interrupt##num##_stub
-
-
 #endif /* MACROS_H */
 
