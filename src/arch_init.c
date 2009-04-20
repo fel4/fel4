@@ -2,13 +2,11 @@
  * arch_init.c - Final architecture initialization 
  */
 #include <multiboot.h>
+#include <macros.h>
 #include <system.h>
 
-extern gdt_entry_t gdt[5];
+extern gdt_entry_t gdt[GDT_TBL_SIZ];
 extern idt_entry_t idt[NUM_INTERRUPTS];
-
-/* Check if the bit BIT in FLAGS is set. */
-#define CHECK_FLAG(flags,bit)   ((flags) & (1 << (bit)))
 
 /* assembly function prototypes ( defined in klib.asm ) */
 extern void set_gdt(unsigned long gdt_addr, unsigned int gdt_length);
@@ -71,6 +69,7 @@ arch_init (unsigned long magic, unsigned long addr)
   }
 
   /* setup the global descriptor table. */
+  init_gdt();
   kprintf("GDT table size: %d, GDT entry size: %d\n", sizeof(gdt), sizeof(gdt_entry_t));
   kprintf("Attempting to setup the GDT\n");
   set_gdt((unsigned long)gdt, sizeof(gdt));
@@ -85,6 +84,7 @@ arch_init (unsigned long magic, unsigned long addr)
   init_idt(); // setup the IDT table.
   set_idt((unsigned long)idt, sizeof(idt));
 
+  /* reload the segment registers to point to the new descriptors. */
   reload_segments();
 
   enable_interrupts();

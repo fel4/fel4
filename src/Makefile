@@ -3,7 +3,10 @@ LDFLAGS := -nostdlib -Wl,-N -Wl,-Ttext -Wl,100000 -m elf-i386
 
 SRCS := $(wildcard *.c)
 OBJS := $(patsubst %.c, %.o, $(SRCS))
+HEADERS := $(wildcard *.h)
 ASM_OBJS := klib.o start.o isr_stubs.o
+
+
 
 all: kernel.bin
 
@@ -11,7 +14,7 @@ kernel.bin: $(ASM_OBJS) $(OBJS)
 	ld -T link.ld -m elf_i386 -o kernel.bin $^
 	@echo Done!
 
-%.o: %.c system.h
+%.o: %.c $(HEADERS)
 	gcc $(CFLAGS) -c -o $@ $<
 
 start.o: start.asm
