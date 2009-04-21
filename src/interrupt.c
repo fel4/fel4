@@ -33,8 +33,18 @@ void exception7_handler(void) {
   kprintf("7 -- Coprocessor Not Available\n");
 }
 
-void exception8_handler(void) {
+void exception8_handler(unsigned long errorcode) {
+  unsigned short err = 0;
   kprintf("8 -- Double Fault!\n");
+  kprintf("errorcode = %d\n", errorcode);
+  err = (unsigned short) errorcode & 0x0000FFFF;
+  kprintf("ext bit: %d\n", errorcode & 1);
+  kprintf("i bit: %d\n", (errorcode >> 1) & 1);
+  if ( ! (errorcode & ( 1 << 1) ) ) {
+    kprintf("ti bit: %d\n", (errorcode >> 2 )& 1);
+  }
+  kprintf("source selector: 0x%x\n", err >> 3 );
+  
 }
 
 void exception9_handler(void) {

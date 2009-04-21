@@ -24,6 +24,7 @@ arch_init (unsigned long magic, unsigned long addr)
 {
   multiboot_info_t *mbi;
   gdt_entry_t *new_gdt;
+  idt_entry_t *new_idt;
 
   init_video();
 
@@ -37,6 +38,7 @@ arch_init (unsigned long magic, unsigned long addr)
   /* set the address of the mbi struct to the address supplied by the bootloader. */
   mbi = (multiboot_info_t *) addr;
 
+  /*
   kprintf("multiboot flags = 0x%x\n", mbi->flags);
 
   if ( CHECK_FLAG(mbi->flags, 0) ) {
@@ -49,8 +51,10 @@ arch_init (unsigned long magic, unsigned long addr)
   } else {
     kprintf("no cmdline supplied\n");
   }
+  */
 
   /* read aout or elf header info */
+  /*
   if ( CHECK_FLAG(mbi->flags, 4) &&
        CHECK_FLAG(mbi->flags, 5) ) {
     kprintf("ERROR: flags 4 & 5 are mutually exclusive!\n");
@@ -67,22 +71,27 @@ arch_init (unsigned long magic, unsigned long addr)
             mbi->mmap_length, mbi->mmap_addr);
     kprintf("found %d memory maps.\n\n", mbi->mmap_length / sizeof(memory_map_t) );
   }
+  */
 
   /* setup the global descriptor table. */
-  init_gdt();
   kprintf("GDT table size: %d, GDT entry size: %d\n", sizeof(gdt), sizeof(gdt_entry_t));
   kprintf("Attempting to setup the GDT\n");
-  set_gdt((unsigned long)gdt, sizeof(gdt));
-
+  init_gdt();
+  
   /* move the GDT to its real location.*/
   kprintf("moving the GDT to its permanent location\n");
   new_gdt = (gdt_entry_t*)memcpy((unsigned char*)0x800, (const unsigned char*)gdt, sizeof(gdt));
   set_gdt((unsigned long)new_gdt, sizeof(gdt));
 
+ /* reload the segment registers to point to the new descriptors. */
+  reload_segments();
+
+
   /* setup interrupts */
   kprintf("Attempting to setup the IDT\n");
   init_idt(); // setup the IDT table.
-  set_idt((unsigned long)idt, sizeof(idt));
+  new_idt = (idt_entry_t*)memcpy((unsigned char*)0x0000, (const unsigned char*)idt, sizeof(idt));
+  set_idt((unsigned long)new_idt, sizeof(idt));
 
   /* reload the segment registers to point to the new descriptors. */
   reload_segments();

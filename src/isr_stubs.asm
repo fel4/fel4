@@ -77,7 +77,9 @@ exception7_stub:
   iretd
 
 exception8_stub:
+  pop eax
   pushad
+  push eax
   EXTERN exception8_handler
   call exception8_handler
   popad
