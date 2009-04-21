@@ -19,8 +19,7 @@ extern void reload_segments();
  * This function performs some final arch specific initialization
  * before kernel_main() gets called -- our real main() function.
  */
-void
-arch_init (unsigned long magic, unsigned long addr)
+void arch_init (unsigned long magic, unsigned long addr)
 {
   multiboot_info_t *mbi;
   gdt_entry_t *new_gdt;

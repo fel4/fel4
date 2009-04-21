@@ -8,8 +8,7 @@
 /* This is a very simple main() function. All it does is print stuff
 *  and then sit in an infinite loop. This will be like our 'idle'
 *  loop */
-void
-kernel_main (void)
+void kernel_main (void)
 {
 
   /* print a welcome message. */
