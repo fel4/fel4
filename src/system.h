@@ -78,5 +78,8 @@ typedef struct {
 
 extern void init_tss();
 
+/* PIC.C */
+extern void init_pics(int pic1, int pic2);
+
 #endif /* __SYSTEM_H */
 

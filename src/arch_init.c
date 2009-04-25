@@ -72,6 +72,9 @@ void arch_init (unsigned long magic, unsigned long addr)
   }
   */
 
+  /* initialize the programmable interrupt controllers */
+  init_pics(0x20, 0x28);
+
   /* setup the global descriptor table. */
   kprintf("GDT table size: %d, GDT entry size: %d\n", sizeof(gdt), sizeof(gdt_entry_t));
   kprintf("Attempting to setup the GDT\n");
