@@ -15,7 +15,7 @@ extern unsigned char inportb (unsigned short _port);
 extern void outportb (unsigned short _port, unsigned char _data);
 extern void kprintf( const char *format, ... );
 
-/* SCRN.C */
+/* VGA_DRIVER.C */
 extern void cls();
 extern void putch(unsigned char c);
 extern void puts(unsigned char *str);

@@ -6,6 +6,7 @@
 /* These define our textpointer, our background and foreground
 *  colors (attributes), and x and y cursor coordinates */
 unsigned short *textmemptr;
+unsigned short *vgamemptr;
 int attrib = 0x0F;
 int csr_x = 0, csr_y = 0;
 
