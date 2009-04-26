@@ -81,5 +81,8 @@ extern void init_tss();
 /* PIC.C */
 extern void init_pics(int pic1, int pic2);
 
+/* KBD_DRIVER.C */
+extern void handle_kbd_event(void);
+
 #endif /* __SYSTEM_H */
 

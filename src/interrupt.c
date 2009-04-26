@@ -77,4 +77,15 @@ void exception16_handler(void) {
 
 void interrupt_handler(void) {
   kprintf("saw an interrupt\n");
+  outportb(0x20, 0x20);
+}
+
+void timer_handler(void) {
+  /* TODO -- add call to process scheduler. */
+  outportb(0x20, 0x20);
+}
+
+void keyboard_handler(void) { 
+  handle_kbd_event();
+  outportb(0x20,0x20);
 }

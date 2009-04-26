@@ -17,6 +17,8 @@ global exception13_stub
 global exception14_stub
 global exception16_stub
 global interrupt_stub
+global timer_stub
+global keyboard_stub
 
 SECTION .text
 
@@ -134,10 +136,23 @@ exception16_stub:
   popad
   iretd
 
-
 interrupt_stub:
   pushad
   EXTERN interrupt_handler
   call interrupt_handler
+  popad
+  iretd
+
+timer_stub:
+  pushad
+  EXTERN timer_handler
+  call timer_handler
+  popad
+  iretd
+
+keyboard_stub:
+  pushad
+  EXTERN keyboard_handler
+  call keyboard_handler
   popad
   iretd

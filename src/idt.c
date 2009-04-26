@@ -20,6 +20,8 @@ extern void exception13_stub();
 extern void exception14_stub();
 extern void exception16_stub();
 extern void interrupt_stub();
+extern void timer_stub();
+extern void keyboard_stub();
 
 /* 
  * this function initializes the interrupt descriptor table to point every
@@ -81,6 +83,12 @@ void init_idt() {
         break;
       case 16:
         set_handler(idt, i, 1, exception16_stub);
+        break;
+      case 32:
+        set_handler(idt, i, 1, timer_stub);
+        break;
+      case 33:
+        set_handler(idt, i, 1, keyboard_stub);
         break;
       default:
         set_handler(idt, i, 1, interrupt_stub);

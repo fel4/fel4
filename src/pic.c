@@ -27,7 +27,7 @@ void init_pics(int pic1, int pic2) {
   outportb(PIC2 + 1, ICW4);
   
   /* disable all IRQs */
-  outportb(PIC1 + 1, 0xFF);
+  outportb(PIC1 + 1, 0x01);
 }
 
 
