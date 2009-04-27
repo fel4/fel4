@@ -1,5 +1,6 @@
-//////////////////////////////////////////////////////////////////////
-// File: scrn.c - putting characters on the screen (see comments below)
+/*
+ * vga_driver.c - basic vga rendering driver.
+ */
 
 #include <system.h>
 
