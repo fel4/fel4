@@ -40,7 +40,43 @@ void init_gdt() {
     .flags  = 0xCF,
     .base2  = 0x0
   };
-  /* user space code descriptor */
+  /* core system space code descriptor */
+  gdt_entry_t core_code_desc = {
+    .limit  = 0xFFFF,
+    .base   = 0x0,
+    .base1  = 0x0,
+    .access = 0xBA,
+    .flags  = 0xCF,
+    .base2  = 0x0
+  };
+  /* core space data descriptor */
+  gdt_entry_t core_data_desc = {
+    .limit  = 0xFFFF,
+    .base   = 0x0,
+    .base1  = 0x0,
+    .access = 0xB2,
+    .flags  = 0xCF,
+    .base2  = 0x0
+  };
+  /* general system space code descriptor */
+  gdt_entry_t sys_code_desc = {
+    .limit  = 0xFFFF,
+    .base   = 0x0,
+    .base1  = 0x0,
+    .access = 0xDA,
+    .flags  = 0xCF,
+    .base2  = 0x0
+  };
+  /* general system space data descriptor */
+  gdt_entry_t sys_data_desc = {
+    .limit  = 0xFFFF,
+    .base   = 0x0,
+    .base1  = 0x0,
+    .access = 0xD2,
+    .flags  = 0xCF,
+    .base2  = 0x0
+  };
+ /* user space code descriptor */
   gdt_entry_t user_code_desc = {
     .limit  = 0xFFFF,
     .base   = 0x0,
@@ -59,12 +95,17 @@ void init_gdt() {
     .base2  = 0x0
   };
 
+
   /* setup the static gdt entries. */
   gdt[0] = null_desc;
   gdt[1] = kern_code_desc;
   gdt[2] = kern_data_desc;
-  gdt[3] = user_code_desc;
-  gdt[4] = user_data_desc;
+  gdt[3] = core_code_desc;
+  gdt[4] = core_data_desc;
+  gdt[5] = sys_code_desc;
+  gdt[6] = sys_data_desc;
+  gdt[7] = user_code_desc;
+  gdt[8] = user_data_desc;
 
   for (i = 5; i < GDT_TBL_SIZ; i++) {
     gdt[i].access = 0x89;

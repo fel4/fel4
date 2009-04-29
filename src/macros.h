@@ -39,7 +39,7 @@
 
 #define CPU_COUNT 64
 
-#define GDT_TBL_SIZ 5 + CPU_COUNT
+#define GDT_TBL_SIZ 9 + CPU_COUNT
 
 #define NUM_INTERRUPTS 256
 
