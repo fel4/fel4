@@ -1,0 +1,34 @@
+Shard Privledge Ring Utilization Layout and Description
+
+This document describes the layout and the rationale behind the decision
+to place certain shard componets at certain privledge levels.
+
+===============================================================================
+RING 0 ========================================================================
+===============================================================================
+
+Ring 0 is used exclusively by the kernel, which handles the IPC and event
+systems for shard.
+
+===============================================================================
+RING 1 ========================================================================
+===============================================================================
+
+Ring 1 is used by the core system components that are considered part of the 
+shard platform. These components usually abstract lower-level system functions
+for use by higher level components and applications.
+
+===============================================================================
+RING 2 ========================================================================
+===============================================================================
+
+Ring 2 is used by system components that require less permissions that ring 1.
+These are typically drivers and other system components that aren't distributed
+as part of the shard core platform.
+
+===============================================================================
+RING 3 ========================================================================
+==============================================================================
+
+Ring 3 is used for user-space, just like everyone else.
+
