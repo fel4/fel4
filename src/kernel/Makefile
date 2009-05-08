@@ -34,4 +34,4 @@ install: kernel.bin
 	@mdel c:/boot/grub/kernel.bin
 	@mdel c:/boot/grub/menu.lst
 	@mcopy kernel.bin c:/boot/grub/
-	@mcopy ../doc/menu.lst c:/boot/grub/
+	@mcopy ../../doc/menu.lst c:/boot/grub/
