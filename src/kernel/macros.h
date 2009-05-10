@@ -37,9 +37,9 @@
 /* The size of our stack (16KB). */
 #define STACK_SIZE                      0x4000
 
-#define CPU_COUNT 64
+#define CPU_COUNT 8
 
-#define GDT_TBL_SIZ 9 + CPU_COUNT
+#define GDT_TBL_SIZ 3 + CPU_COUNT
 
 #define NUM_INTERRUPTS 256
 

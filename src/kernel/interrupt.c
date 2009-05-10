@@ -1,10 +1,6 @@
 #include <macros.h>
 #include <system.h>
 
-void exception_handler(void) {
-  kprintf("CPU Exception!\n");
-}
-
 void exception0_handler(void) {
   kprintf("0 -- Divide Error!\n");
 }
@@ -89,3 +85,32 @@ void keyboard_handler(void) {
   handle_kbd_event();
   outportb(0x20,0x20);
 }
+
+void ipc_handler(void) {
+  /* TODO: add IPC logic */
+}
+
+void id_nearest_handler(void) {
+  /* TODO: add code */
+}
+
+void fpage_unmap_handler(void) {
+  /* TODO: add code */
+}
+
+void thread_switch_handler(void) {
+  /* TODO: add code */
+}
+
+void thread_schedule_handler(void) {
+  /* TODO: add code */
+}
+
+void lthread_ex_regs_handler(void) {
+  /* TODO: add code */
+}
+
+void task_new_handler(void) {
+  /* TODO: add code */
+}
+

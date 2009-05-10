@@ -1,6 +1,5 @@
 ; Assembly stubs for Interrupt Service Routines
 [BITS 32]
-global exception_stub
 global exception0_stub
 global exception1_stub
 global exception3_stub
@@ -19,15 +18,16 @@ global exception16_stub
 global interrupt_stub
 global timer_stub
 global keyboard_stub
+global ipc_stub
+global id_nearest_stub
+global fpage_unmap_stub
+global thread_switch_stub
+global thread_schedule_stub
+global lthread_ex_regs_stub
+global task_new_stub
+
 
 SECTION .text
-
-exception_stub:
-  pushad
-  EXTERN exception_handler
-  call exception_handler
-  popad
-  iretd
 
 exception0_stub:
   pushad
@@ -155,4 +155,39 @@ keyboard_stub:
   EXTERN keyboard_handler
   call keyboard_handler
   popad
+  iretd
+
+ipc_stub:
+  EXTERN ipc_handler
+  call ipc_handler
+  iretd
+
+id_nearest_stub:
+  EXTERN id_nearest_handler
+  call id_nearest_handler
+  iretd
+
+fpage_unmap_stub:
+  EXTERN fpage_unmap_handler
+  call fpage_unmap_handler
+  iretd
+
+thread_switch_stub:
+  EXTERN thread_switch_handler
+  call thread_switch_handler
+  iretd
+
+thread_schedule_stub:
+  EXTERN thread_schedule_handler
+  call thread_schedule_handler
+  iretd
+
+lthread_ex_regs_stub:
+  EXTERN lthread_ex_regs_handler
+  call lthread_ex_regs_handler
+  iretd
+
+task_new_stub:
+  EXTERN task_new_handler
+  call task_new_handler
   iretd

@@ -22,6 +22,14 @@ extern void exception16_stub();
 extern void interrupt_stub();
 extern void timer_stub();
 extern void keyboard_stub();
+extern void ipc_stub();
+extern void id_nearest_stub();
+extern void fpage_unmap_stub();
+extern void thread_switch_stub();
+extern void thread_schedule_stub();
+extern void lthread_ex_regs_stub();
+extern void task_new_stub();
+
 
 /* 
  * this function initializes the interrupt descriptor table to point every
@@ -90,6 +98,28 @@ void init_idt() {
       case 33:
         set_handler(idt, i, 1, keyboard_stub);
         break;
+      case 48:
+        set_handler(idt, i, 1, ipc_stub);
+        break;
+      case 49:
+        set_handler(idt, i, 1, id_nearest_stub);
+        break;
+      case 50:
+        set_handler(idt, i, 1, fpage_unmap_stub);
+        break;
+      case 51:
+        set_handler(idt, i, 1, thread_switch_stub);
+        break;
+      case 52:
+        set_handler(idt, i, 1, thread_schedule_stub);
+        break;
+      case 53:
+        set_handler(idt, i, 1, lthread_ex_regs_stub);
+        break;
+      case 54:
+        set_handler(idt, i, 1, task_new_stub);
+        break;
+
       default:
         set_handler(idt, i, 1, interrupt_stub);
     }
