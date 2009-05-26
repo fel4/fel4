@@ -12,7 +12,9 @@ extern unsigned short *memsetw(unsigned short *dest, unsigned short val, int cou
 /* STRING.C */
 extern int strlen(const char *str);
 extern unsigned char inportb (unsigned short _port);
+extern unsigned short inportw (unsigned short _port);
 extern void outportb (unsigned short _port, unsigned char _data);
+extern void outportw (unsigned short _port, unsigned short _data);
 extern void kprintf( const char *format, ... );
 
 /* VGA_DRIVER.C */
@@ -83,6 +85,12 @@ extern void init_pics(int pic1, int pic2);
 
 /* KBD_DRIVER.C */
 extern void handle_kbd_event(void);
+
+/* ATA_DRIVER.C */
+extern unsigned char* access_block(int controller, int drive, 
+                                   unsigned long long addr, unsigned char* buffer, 
+                                   int rw_mode, int lba48_mode);
+
 
 #endif /* __SYSTEM_H */
 
