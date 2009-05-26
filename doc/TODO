@@ -1,23 +1,23 @@
 Shard TODO:
 
-
-1. Update global descriptor table to create code / data segments for all 4
- ring levels. Current privledge model as follows:
-   Ring 0 -- kernel
-   Ring 1 -- Core system components &  drivers.
-   Ring 2 -- non-core system components & drivers.
-   Ring 3 -- Userspace.
-
-"Core system components & drivers" is defined as the applications that considered
-to be part of the base shard platform. 
-
 1.5. Write real documentation and steps so that other people can build and
 run the system in a test environment.
+
+  a. Migrate from a FAT 32 based boot image to an ext 2 based one. Integrate it
+  into the build system so that people can build boot images using the Makefile.
+
+1.75. Add support for booting from an ext 2/3 disk ( is it easier to build an ext3
+boot image than a fat32 one? )
 
 2. Start working on fleshing out an ABI, API, etc. Currently, the plan is to adhere
 to the L4 api for the kernel as much as possible, and build upon that.
 
-3. Add support for booting from an ext 2/3 disk ( is it easier to build an ext3
-boot image than a fat32 one? )
+  a. L4 puts IPC in the kernel and moves everything else out to user space.  A
+  large portion of the 'system library' is going to consist of wrapping ipc
+  calls to the various system components and making them easy to take 
+  advantage of.
+  b. Another issue whose time for consideration has come is what sort of experience
+  will be provided to developers of applications.
+
 
 4. Start pondering a real feature list, a real roadmap, and a real timeline.
