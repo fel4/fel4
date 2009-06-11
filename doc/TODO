@@ -1,5 +1,9 @@
 Shard TODO:
 
+1.25. Migrate as much nasm assembly as possible to GCC inline assembly.
+      Start moving toward phasing nasm out of the toolchain in favor of
+      the holy trinity of gcc, as, and ld.
+
 1.5. Write real documentation and steps so that other people can build and
 run the system in a test environment.
 

@@ -4,27 +4,29 @@
 #ifndef __SYSTEM_H
 #define __SYSTEM_H
 
-/* MEMORY.C */
-extern unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count);
-extern unsigned char *memset(unsigned char *dest, unsigned char val, int count);
-extern unsigned short *memsetw(unsigned short *dest, unsigned short val, int count);
-
-/* STRING.C */
-extern int strlen(const char *str);
+/* raw_io.c */
 extern unsigned char inportb (unsigned short _port);
 extern unsigned short inportw (unsigned short _port);
 extern void outportb (unsigned short _port, unsigned char _data);
 extern void outportw (unsigned short _port, unsigned short _data);
+
+/* memory.c */
+extern unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count);
+extern unsigned char *memset(unsigned char *dest, unsigned char val, int count);
+extern unsigned short *memsetw(unsigned short *dest, unsigned short val, int count);
+
+/* string.c */
+extern int strlen(const char *str);
 extern void kprintf( const char *format, ... );
 
-/* VGA_DRIVER.C */
+/* vga_driver.c */
 extern void cls();
 extern void putch(unsigned char c);
 extern void puts(unsigned char *str);
 extern void settextcolor(unsigned char forecolor, unsigned char backcolor);
 extern void init_video();
 
-/* GDT.C */
+/* gdt.c */
 typedef struct {
   unsigned short limit;
   unsigned short base;
@@ -36,7 +38,7 @@ typedef struct {
 
 extern void init_gdt();
 
-/* IDT.C */
+/* idt.c */
 typedef struct {
    unsigned short offset_1; // offset bits 0..15
    unsigned short selector; // a code segment selector in GDT or LDT
@@ -48,7 +50,7 @@ typedef struct {
 extern void init_idt();
 extern void set_handler(idt_entry_t table[], int inter_num, int present, void (*handler)(void));
 
-/* TSS.C */
+/* tss.c */
 typedef struct {
   unsigned long unused0;
   unsigned long esp0;
@@ -80,16 +82,18 @@ typedef struct {
 
 extern void init_tss();
 
-/* PIC.C */
+/* pic.c */
 extern void init_pics(int pic1, int pic2);
 
-/* KBD_DRIVER.C */
+/* kbd_driver.c */
 extern void handle_kbd_event(void);
 
-/* ATA_DRIVER.C */
+/* ata_driver.c */
 extern unsigned char* access_block(int controller, int drive, 
                                    unsigned long long addr, unsigned char* buffer, 
                                    int rw_mode, int lba48_mode);
+
+/* fat_driver.c */
 
 
 #endif /* __SYSTEM_H */

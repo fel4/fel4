@@ -43,5 +43,15 @@
 
 #define NUM_INTERRUPTS 256
 
+#define CTRL1_PORT_BASE 0x1F0
+#define CTRL2_PORT_BASE 0x170
+
+#define READ_MODE 0x20
+#define WRITE_MODE 0x30
+
+#define LBA28_MODE 0
+#define LBA48_MODE 1
+
+
 #endif /* MACROS_H */
 

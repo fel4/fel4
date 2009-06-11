@@ -3,16 +3,6 @@
 #include <macros.h>
 #include <system.h>
 
-#define CTRL1_PORT_BASE 0x1F0
-#define CTRL2_PORT_BASE 0x170
-
-#define READ_MODE 0x20
-#define WRITE_MODE 0x30
-
-#define LBA28_MODE 0
-#define LBA48_MODE 1
-
-
 /* this function uses lba28/48 via pio for block device access. */
 unsigned char *access_block(int controller, int drive, unsigned long long addr, unsigned char* buffer, int rw_mode, int lba48_mode) {
 
