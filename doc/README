@@ -46,10 +46,10 @@ image.
 
 === Adding a grub menu ===
 
-We next add a minimal grub menu by copying the menu.lst from doc/ directory 
+We next add a minimal grub menu by copying the menu.lst from src/kernel/ directory 
 into the image.
  
- $ cd <path_to_shard_repo>/doc
+ $ cd <path_to_shard_repo>/src/kernel
  $ mcopy menu.lst  c:/boot/grub/
 
 === Installing the shard kernel ===
@@ -57,7 +57,7 @@ into the image.
 To install shard into the image, simply build the kernel and run the 'install'
 rule from the Makefile.
 
- $ cd <path_to_shard_repo>/src
+ $ cd <path_to_shard_repo>/src/kernel
  $ make; make install
 
 === Running the shard kernel under Qemu ===
