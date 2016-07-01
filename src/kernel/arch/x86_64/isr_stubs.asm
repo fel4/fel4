@@ -1,5 +1,5 @@
 ; Assembly stubs for Interrupt Service Routines
-[BITS 32]
+[BITS 64]
 global exception0_stub
 global exception1_stub
 global exception3_stub
