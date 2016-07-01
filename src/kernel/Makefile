@@ -11,16 +11,19 @@ include $(SHARD_KERNEL_ARCH_ROOT)/shard.mk
 build-kernel: $(SHARD_KERNEL_BINARY)
 
 $(SHARD_KERNEL_BINARY): $(SHARD_KERNEL_ASM_OBJS)
-	@ld -T $(SHARD_LINK_SCRIPT) -m elf_i386 -o $(SHARD_KERNEL_BINARY) $(SHARD_KERNEL_ASM_OBJS)
-	@echo Done!
+	@echo "Building $@"
+	@$(LD) $(LD_ARGS) -T $(SHARD_LINK_SCRIPT) -o $(SHARD_KERNEL_BINARY) $(SHARD_KERNEL_ASM_OBJS)
 
 $(SHARD_BUILD_ARCH_ROOT)/%.o: $(SHARD_KERNEL_ARCH_ROOT)/%.asm
 	@mkdir -p $(dir $@)
+	@echo "$(notdir $<) -> $@"
 	@$(NASM) $(NASM_FLAGS) $< -o $@
 
 clean:
-	rm -f $(SHARD_KERNEL_BINARY)
-	rm -f $(SHARD_KERNEL_ASM_OBJS)
+	@echo "Cleaning $(SHARD_KERNEL_BINARY)"
+	@rm -f $(SHARD_KERNEL_BINARY)
+	@echo "Cleaning ASM objects in $(dir $(firstword $(SHARD_KERNEL_ASM_OBJS)))"
+	@rm -f $(SHARD_KERNEL_ASM_OBJS)
 
 install: $(SHARD_KERNEL_BINARY)
 	#@echo "Installing kernel to QEMU image"

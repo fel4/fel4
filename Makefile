@@ -1,27 +1,32 @@
-
+export
 SHARD_ROOT := $(realpath $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))))
 SHARD_BUILD_ROOT ?= $(SHARD_ROOT)/build
 SHARD_DOC_ROOT := $(SHARD_ROOT)/doc
 SHARD_SOURCE_ROOT := $(SHARD_ROOT)/src
 
-SHARD_ARCH ?= `uname -m`
+SHARD_ARCH ?= $(shell uname -m)
+SHARD_BINARY_FORMAT := elf
 
 SHARD_BUILD_ARCH_ROOT := $(SHARD_BUILD_ROOT)/arch/$(SHARD_ARCH)
 SHARD_KERNEL_BINARY := $(SHARD_BUILD_ARCH_ROOT)/kernel.bin
 
 include Tools.mk
 
-.PHONY: all build-docs build-source clean
+.PHONY: all all-prep build-docs build-source clean
 
-all: build-docs build-kernel
+.DEFAULT: all
+
+all: all-prep build-docs build-source
+
+all-prep:
 	@echo "Shard Project Root: $(SHARD_ROOT)"
 
 build-docs:
-	pushd $(SHARD_DOC_ROOT)
-	$(MAKE)
-	popd
+	@$(MAKE) -C $(SHARD_DOC_ROOT)
 
 build-source:
-	pushd $(SHARD_SOURCE_ROOT)
-	$(MAKE)
-	popd
+	@$(MAKE) -C $(SHARD_SOURCE_ROOT)
+
+clean:
+	@$(MAKE) -C $(SHARD_DOC_ROOT) clean
+	@$(MAKE) -C $(SHARD_SOURCE_ROOT) clean

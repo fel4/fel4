@@ -1,10 +1,12 @@
+export
 SHARD_KERNEL_ROOT := $(SHARD_SOURCE_ROOT)/kernel
 
-.PHONY: build-kernel build-source
+.PHONY: build-kernel build-source clean
 
 build-kernel:
-	pushd $(SHARD_KERNEL_ROOT)
-	$(MAKE)
-	popd
+	@$(MAKE) -C $(SHARD_KERNEL_ROOT)
 
 build-source: build-kernel
+
+clean:
+	@$(MAKE) -C $(SHARD_KERNEL_ROOT) clean
