@@ -74,6 +74,7 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
    config.vm.provision "shell", inline: <<-SHELL
      apt-get update
+     apt-get install -y binutils
      apt-get install -y nasm
      apt-get install -y git
      apt-get install -y xorriso
