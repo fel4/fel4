@@ -6,13 +6,16 @@
 ; perhaps setting up the GDT and segments. Please note that interrupts
 ; are disabled at this point.
 
-extern check_cpuid, check_multiboot
-
-global start, error
+extern check_cpuid ; import from cpuid.asm
+extern check_multiboot ; import from multiboot.asm
+extern enable_paging, setup_page_tables ; import from paging.asm
+extern gdt64, gdt64.code, gdt.data, gdt64.pointer ; import from gdt.asm
+extern long_start ; import from long_start.asm
 
 section .text
 bits 32
 
+global start
 start:
     ; intialize the stack.
     mov esp, stack_top
@@ -22,12 +25,26 @@ start:
     call check_cpuid
     call check_long_mode
 
+    call setup_page_tables
+    call enable_paging
+
+    ; load the 64-bit global descriptor table.
+    lgdt [gdt64.pointer]
+
+    ; update selectors
+    mov ax, 16
+    mov ss, ax  ; stack selector
+    mov ds, ax  ; data selector
+    mov es, ax  ; extra selector
+
+    jmp gdt64.code:long_start
     ; print `OK` to the screen
-    mov dword [0xb8000], 0x2f4b2f4f
-    hlt
+    ;mov dword [0xb8000], 0x2f4b2f4f
+    ;hlt
 
 ; Prints `ERR: ` and the given error code to screen and hangs.
 ; parameter: error code (in ascii) in al
+global error
 error:
     mov dword [0xb8000], 0x4f524f45
     mov dword [0xb8004], 0x4f3a4f52

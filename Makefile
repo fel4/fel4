@@ -36,5 +36,5 @@ clean:
 install:
 	@$(MAKE) -C $(SHARD_SOURCE_ROOT) install
 
-run:
+run: install
 	@$(QEMU) -cdrom $(SHARD_ISO)
