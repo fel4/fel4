@@ -11,4 +11,5 @@ endif
 ifeq ($(shell uname),Linux)
 	LD := $(shell which ld)
 	NASM := $(shell which nasm)
+	QEMU := $(shell which qemu-system-$(SHARD_ARCH))
 endif
