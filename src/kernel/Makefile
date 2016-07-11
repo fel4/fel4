@@ -1,7 +1,9 @@
 SHARD_KERNEL_ARCH_ROOT := $(SHARD_KERNEL_ROOT)/arch/$(SHARD_ARCH)
+SHARD_KERNEL_RUST_ROOT := $(SHARD_KERNEL_ROOT)/src
 
 SHARD_KERNEL_ASM_SRCS := $(wildcard $(SHARD_KERNEL_ARCH_ROOT)/*.asm)
 SHARD_KERNEL_ASM_OBJS := $(patsubst $(SHARD_KERNEL_ARCH_ROOT)/%.asm, $(SHARD_BUILD_ARCH_ROOT)/%.o, $(SHARD_KERNEL_ASM_SRCS))
+SHARD_KERNEL_RUST_SRCS := $(shell find $(SHARD_BUILD_ARCH_ROOT) -name *.rs)
 SHARD_LINK_SCRIPT := $(SHARD_KERNEL_ARCH_ROOT)/link.ld
 
 SHARD_KERNEL_ISO_PATH := $(SHARD_ISO_ROOT)/boot/kernel.bin
@@ -12,7 +14,7 @@ SHARD_RUST_STATICLIB := $(SHARD_KERNEL_ROOT)/target/$(SHARD_TARGET)/debug/libsha
 
 include $(SHARD_KERNEL_ARCH_ROOT)/shard.mk
 
-.PHONY: build-image build-kernel clean install
+.PHONY: build-image build-kernel clean install $(SHARD_RUST_STATICLIB)
 
 build-image: $(SHARD_KERNEL_ISO_PATH) $(SHARD_GRUB_CONFIG)
 	@echo "Building ISO image"
@@ -29,7 +31,7 @@ $(SHARD_BUILD_ARCH_ROOT)/%.o: $(SHARD_KERNEL_ARCH_ROOT)/%.asm
 	@echo "$(notdir $<) -> $@"
 	@$(NASM) $(NASM_FLAGS) $< -o $@
 
-$(SHARD_RUST_STATICLIB):
+$(SHARD_RUST_STATICLIB): $(SHARD_KERNEL_RUST_SRCS)
 	@echo "Building Shard Cargo project"
 	@cargo build --target $(SHARD_TARGET)
 

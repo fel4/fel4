@@ -11,6 +11,7 @@ extern check_multiboot ; import from multiboot.asm
 extern enable_paging, setup_page_tables ; import from paging.asm
 extern gdt64, gdt64.code, gdt.data, gdt64.pointer ; import from gdt.asm
 extern long_start ; import from long_start.asm
+extern setup_SSE ; import from sse.asm
 
 section .text
 bits 32
@@ -27,6 +28,7 @@ start:
 
     call setup_page_tables
     call enable_paging
+    call setup_SSE
 
     ; load the 64-bit global descriptor table.
     lgdt [gdt64.pointer]

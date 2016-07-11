@@ -5,3 +5,12 @@ authors = ["Cary Haynie <cary.haynie@gmail.com"]
 
 [lib]
 crate-type = ["staticlib"]
+
+[dependencies]
+rlibc = "1.0.0"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
