@@ -9,7 +9,7 @@
 extern check_cpuid ; import from cpuid.asm
 extern check_multiboot ; import from multiboot.asm
 extern enable_paging, setup_page_tables ; import from paging.asm
-extern gdt64, gdt64.code, gdt.data, gdt64.pointer ; import from gdt.asm
+extern gdt64, gdt64.code, gdt64.data, gdt64.pointer ; import from gdt.asm
 extern long_start ; import from long_start.asm
 extern setup_SSE ; import from sse.asm
 
@@ -34,7 +34,7 @@ start:
     lgdt [gdt64.pointer]
 
     ; update selectors
-    mov ax, 16
+    mov ax, gdt64.data
     mov ss, ax  ; stack selector
     mov ds, ax  ; data selector
     mov es, ax  ; extra selector
@@ -42,7 +42,7 @@ start:
     jmp gdt64.code:long_start
     ; print `OK` to the screen
     ;mov dword [0xb8000], 0x2f4b2f4f
-    ;hlt
+    hlt
 
 ; Prints `ERR: ` and the given error code to screen and hangs.
 ; parameter: error code (in ascii) in al
