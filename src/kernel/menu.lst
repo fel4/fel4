@@ -1,8 +1,0 @@
-serial --unit=0 --stop=1 --speed=115200 --parity=no --word=8
-terminal --timeout=0 serial console
-
-default 0
-timeout = 0
-title = shard kernel
-kernel=/boot/grub/kernel.bin
-#module=/boot/grub/additional_modules
