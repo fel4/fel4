@@ -38,3 +38,6 @@ install:
 
 run: install
 	@$(QEMU) -cdrom $(SHARD_ISO)
+
+run-debug: install
+	@$(QEMU) -d int -no-reboot -cdrom $(SHARD_ISO)
