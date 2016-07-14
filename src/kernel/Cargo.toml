@@ -10,6 +10,9 @@ crate-type = ["staticlib"]
 rlibc = "1.0.0"
 spin = "0.4.3"
 
+[dependencies.multiboot2]
+git = "https://github.com/caryhaynie/multiboot2-elf64"
+
 [profile.dev]
 panic = "abort"
 

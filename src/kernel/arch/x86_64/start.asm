@@ -20,6 +20,7 @@ global start
 start:
     ; intialize the stack.
     mov esp, stack_top
+    mov edi, ebx ; move mutliboot pointer to edi
 
     ; cpu feature detection tests.
     call check_multiboot
