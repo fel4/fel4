@@ -51,6 +51,11 @@ setup_page_tables:
     cmp ecx, 512       ; if counter == 512, the whole P2 table is mapped
     jne .map_p2_table  ; else map the next entry
 
+.recursive_map_p4_table
+    mov eax, p4_table
+    or eax, 0b11 ; present & writable
+    mov [p4_table + 511 * 8], eax
+
     ret
 
 

@@ -3,6 +3,8 @@
 #![feature(unique)]
 #![no_std]
 
+#[macro_use]
+extern crate bitflags;
 extern crate multiboot2;
 extern crate rlibc;
 extern crate spin;
@@ -52,7 +54,7 @@ pub extern fn rust_main(multiboot_information_address: usize) {
 
     for i in 1..10 {
         if let Some(frame) = frame_allocator.allocate_frame() {
-            println!("Frame {} at 0x{:x}", i, frame.base_address());
+            println!("Frame {} at 0x{:x}", i, frame.start_address());
         }
     }
 
