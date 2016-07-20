@@ -76,8 +76,10 @@ check_long_mode:
 ; it just to store the stack. Remember that a stack actually grows
 ; downwards, so we declare the size of the data before declaring
 ; the identifier '_sys_stack'
-SECTION .bss
+section .bss
+align 4096
 stack_bottom:
-resb 16384               ; This reserves 16KBytes of memory here
+;resb 1 << 21              ; This reserves 2MiB of memory here
+resb 4096 * 2 ; 8k stack.
 stack_top:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

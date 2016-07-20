@@ -57,14 +57,17 @@ pub extern fn rust_main(multiboot_information_address: usize) {
             println!("Frame {} at 0x{:x}", i, frame.start_address());
         }
     }
+    memory::test_paging(&mut frame_allocator);
 
     loop {}
 }
 
 #[lang = "eh_personality"] extern fn eh_personality() {}
 #[lang = "panic_fmt"] extern fn panic_fmt(fmt: core::fmt::Arguments, file: &str, line: u32) -> ! {
-    println!("\n\nPANIC in {} at line {}:", file, line);
-    println!("      {}", fmt);
+    unsafe {
+        debug::vga::print_error(format_args!("\n\nPANIC in {} at line {}:", file, line));
+        debug::vga::print_error(format_args!("      {}", fmt));
+    }
     loop {}
 }
 

@@ -72,6 +72,7 @@ impl ActivePageTable {
 
         // fallback logic to handle huge pages.
         let huge_page = || {
+            //println!("huge_page fallback");
             p3.and_then(|p3| {
                 let p3_entry = &p3[page.p3_index()];
 
@@ -112,6 +113,15 @@ impl ActivePageTable {
 
     fn unmap<A>(&mut self, page: Page, allocator: &mut A) where A: FrameAllocator {
         assert!(self.translate(page.start_address()).is_some());
+
+        let p1 = self.p4_mut()
+            .next_table_mut(page.p4_index())
+            .and_then(|p3| p3.next_table_mut(page.p3_index()))
+            .and_then(|p2| p2.next_table_mut(page.p2_index()))
+            .expect("mapping code does not support huge pages.");
+        let frame = p1[page.p1_index()].pointed_frame().unwrap();
+        p1[page.p1_index()].set_unsed();
+        allocator.deallocate_frame(frame);
     }
 
 }
@@ -119,7 +129,7 @@ impl ActivePageTable {
 impl Page {
 
     pub fn containing_address(address: VirtualAddress) -> Page {
-        assert!(address < LOWER_HALF_MAX && address >= HIGHER_HALF_MIN, "invalid address: 0x{:x}", address);
+        assert!(address < LOWER_HALF_MAX || address >= HIGHER_HALF_MIN, "invalid address: 0x{:x}", address);
         Page { number: address / PAGE_SIZE }
     }
 
@@ -142,4 +152,23 @@ impl Page {
     fn p1_index(&self) -> usize {
         (self.number >> 0) & INDEX_MASK
     }
+}
+
+pub fn test_paging<A>(allocator: &mut A) where A: FrameAllocator {
+    println!("obtaining reference to page table.");
+    let page_table = unsafe { ActivePageTable::new() };
+    println!("got reference to page table!");
+
+    // address 0 is mapped
+    println!("Some = {:?}", page_table.translate(0));
+     // second P1 entry
+    println!("Some = {:?}", page_table.translate(4096));
+    // second P2 entry
+    println!("Some = {:?}", page_table.translate(512 * 4096));
+    // 300th P2 entry
+    println!("Some = {:?}", page_table.translate(300 * 512 * 4096));
+    // second P3 entry
+    println!("None = {:?}", page_table.translate(512 * 512 * 4096));
+    // last mapped byte
+    println!("Some = {:?}", page_table.translate(512 * 512 * 4096 - 1));
 }
