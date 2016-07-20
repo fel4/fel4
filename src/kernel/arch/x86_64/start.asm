@@ -79,7 +79,6 @@ check_long_mode:
 section .bss
 align 4096
 stack_bottom:
-;resb 1 << 21              ; This reserves 2MiB of memory here
-resb 4096 * 2 ; 8k stack.
+    resb 1 << 21              ; This reserves 2MiB of memory here
 stack_top:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
