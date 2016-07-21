@@ -1,4 +1,5 @@
 use core::ptr::Unique;
+use x86;
 
 use self::entry::*;
 use self::table::{Table, Level4};
@@ -121,7 +122,10 @@ impl ActivePageTable {
             .expect("mapping code does not support huge pages.");
         let frame = p1[page.p1_index()].pointed_frame().unwrap();
         p1[page.p1_index()].set_unsed();
-        allocator.deallocate_frame(frame);
+        unsafe {
+            x86::tlb::flush(page.start_address());
+        }
+        //allocator.deallocate_frame(frame);
     }
 
 }
@@ -155,9 +159,9 @@ impl Page {
 }
 
 pub fn test_paging<A>(allocator: &mut A) where A: FrameAllocator {
-    println!("obtaining reference to page table.");
-    let page_table = unsafe { ActivePageTable::new() };
-    println!("got reference to page table!");
+    //println!("obtaining reference to page table.");
+    let mut page_table = unsafe { ActivePageTable::new() };
+    //println!("got reference to page table!");
 
     // address 0 is mapped
     println!("Some = {:?}", page_table.translate(0));
@@ -171,4 +175,23 @@ pub fn test_paging<A>(allocator: &mut A) where A: FrameAllocator {
     println!("None = {:?}", page_table.translate(512 * 512 * 4096));
     // last mapped byte
     println!("Some = {:?}", page_table.translate(512 * 512 * 4096 - 1));
+
+    // test page mapping
+    let addr = 42 * 512 * 512 * 4096;
+    let page = Page::containing_address(addr);
+    let frame = allocator.allocate_frame().expect("no more frames");
+    println!("None = {:?}, map to {:?}", page_table.translate(addr), frame);
+    page_table.map_to(page, frame, EntryFlags::empty(), allocator);
+    println!("Some = {:?}", page_table.translate(addr));
+    println!("next free frame: {:?}", allocator.allocate_frame());
+
+    // read data in mapped page.
+    println!("{:#x}", unsafe { *(Page::containing_address(addr).start_address() as *const u64)} );
+
+    // unmap the page.
+    page_table.unmap(Page::containing_address(addr), allocator);
+    println!("None = {:?}", page_table.translate(addr));
+
+    // read data in (un-)mapped page.
+    //println!("{:#x}", unsafe { *(Page::containing_address(addr).start_address() as *const u64)} );
 }
