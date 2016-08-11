@@ -8,6 +8,7 @@ SECTIONS {
         /* ensure multiboot header is at the beginning. */
         KEEP(*(.multiboot_header))
         *(.rodata .rodata.*)
+        . = ALIGN(4K);
     }
 
     .text :
@@ -28,11 +29,27 @@ SECTIONS {
         . = ALIGN(4K);
     }
 
+    .got :
+    {
+        *(.got)
+        . = ALIGN(4K);
+    }
+
+    .got.plt :
+    {
+        *(.got)
+        . = ALIGN(4K);
+    }
+
     .data.rel.ro : ALIGN(4K)
     {
         *(.data.rel.ro.local*) *(.data.rel.ro .data.rel.ro.*)
-
+        . = ALIGN(4K);
     }
 
-
+    .gcc_except_table : ALIGN(4K)
+    {
+        *(.gcc_except_table)
+        . = ALIGN(4K);
+    }
 }

@@ -58,9 +58,33 @@ pub extern fn rust_main(multiboot_information_address: usize) {
             println!("Frame {} at 0x{:x}", i, frame.start_address());
         }
     }
-    memory::test_paging(&mut frame_allocator);
+
+    // enable the no-execute bit.
+    enable_nxe_bit();
+    // enable kernel-mode write protection.
+    enable_write_protect_bit();
+    //memory::test_paging(&mut frame_allocator);
+    memory::remap_the_kernel(&mut frame_allocator, boot_info);
+    println!("It didn't crash!");
 
     loop {}
+}
+
+fn enable_nxe_bit() {
+    use x86::msr::{IA32_EFER, rdmsr, wrmsr};
+
+    let nxe_bit = 1 << 11;
+    unsafe {
+        let efer = rdmsr(IA32_EFER);
+        wrmsr(IA32_EFER, efer | nxe_bit);
+    }
+}
+
+fn enable_write_protect_bit() {
+    use x86::controlregs::{cr0, cr0_write};
+
+    let wp_bit = 1 << 16;
+    unsafe { cr0_write(cr0() | wp_bit) };
 }
 
 #[lang = "eh_personality"] extern fn eh_personality() {}

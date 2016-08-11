@@ -1,4 +1,5 @@
 use memory::Frame;
+use multiboot2::ElfSection;
 
 pub struct Entry(u64);
 
@@ -41,4 +42,23 @@ impl Entry {
     }
 
     pub fn set_unsed(&mut self ) { self.0 = 0 }
+}
+
+impl EntryFlags {
+    pub fn from_elf_section_flags(section: &ElfSection) -> EntryFlags {
+        use multiboot2::{ELF_SECTION_ALLOCATED, ELF_SECTION_WRITABLE, ELF_SECTION_EXECUTABLE};
+
+        let mut flags = EntryFlags::empty();
+
+        if section.flags().contains(ELF_SECTION_ALLOCATED) {
+            flags |= PRESENT;
+        }
+        if section.flags().contains(ELF_SECTION_WRITABLE) {
+            flags |= WRITEABLE;
+        }
+        if !section.flags().contains(ELF_SECTION_EXECUTABLE) {
+            flags |= NO_EXECUTE;
+        }
+        flags
+    }
 }
