@@ -11,6 +11,9 @@ bitflags = "0.7.0"
 rlibc = "1.0.0"
 spin = "0.4.3"
 
+[dependencies.bump_allocator]
+path = "libs/bump_allocator"
+
 [dependencies.multiboot2]
 git = "https://github.com/caryhaynie/multiboot2-elf64"
 
@@ -23,3 +26,5 @@ panic = "abort"
 
 [profile.release]
 panic = "abort"
+
+[workspace]
