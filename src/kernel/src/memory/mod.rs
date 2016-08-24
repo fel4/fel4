@@ -3,6 +3,8 @@ use multiboot2::BootInformation;
 pub use self::area_frame_allocator::AreaFrameAllocator;
 pub use self::paging::{PhysicalAddress, remap_the_kernel, test_paging};
 
+use super::sync;
+
 mod area_frame_allocator;
 mod paging;
 
@@ -77,44 +79,48 @@ pub trait FrameAllocator {
     fn deallocate_frame(&mut self, frame: Frame);
 }
 
+static INIT_LOCK: sync::OnceGuard = sync::OnceGuard::new();
+
 pub fn init(boot_info: &BootInformation) {
-    println!("memory areas:");
-    let memory_map_tag = boot_info.memory_map_tag()
-        .expect("Memory map tag required");
-    for area in memory_map_tag.memory_areas() {
-        println!("    start: 0x{:x}, length: 0x{:x}", area.base_addr, area.length);
-    }
-
-    let elf_sections_tag = boot_info.elf_sections_tag()
-        .expect("Elf sections tag required");
-
-    println!("kernel sections");
-    //for section in elf_sections_tag.sections() {
-    //    println!("      addr: 0x{:x}, size: 0x{:x}, flags: 0x:{:x}",
-    //        section.addr, section.size, section.flags);
-    //}
-
-    let kernel_start = elf_sections_tag.sections()
-        .filter(|s| s.is_allocated()).map(|s| s.addr).min().unwrap();
-    let kernel_end = elf_sections_tag.sections()
-        .filter(|s| s.is_allocated()).map(|s| s.addr + s.size).max().unwrap();
-
-    let multiboot_start = boot_info.start_address();
-    let multiboot_end = boot_info.end_address();
-    println!("    kernel_start: {:#x}, kernel_end: {:#x}", kernel_start, kernel_end);
-    println!("    multiboot_start: {:#x}, multiboot_end: {:#x}", multiboot_start, multiboot_end);
-
-    let mut frame_allocator = AreaFrameAllocator::new(kernel_start as usize, kernel_end as usize,
-        multiboot_start, multiboot_end, memory_map_tag.memory_areas());
-
-    println!("{:?}", frame_allocator.allocate_frame());
-
-    for i in 1..10 {
-        if let Some(frame) = frame_allocator.allocate_frame() {
-            println!("Frame {} at 0x{:x}", i, frame.start_address());
+    sync::call_once(&INIT_LOCK, || {
+        println!("memory areas:");
+        let memory_map_tag = boot_info.memory_map_tag()
+            .expect("Memory map tag required");
+        for area in memory_map_tag.memory_areas() {
+            println!("    start: 0x{:x}, length: 0x{:x}", area.base_addr, area.length);
         }
-    }
 
-    //memory::test_paging(&mut frame_allocator);
-    remap_the_kernel(&mut frame_allocator, boot_info);
+        let elf_sections_tag = boot_info.elf_sections_tag()
+            .expect("Elf sections tag required");
+
+        println!("kernel sections");
+        //for section in elf_sections_tag.sections() {
+        //    println!("      addr: 0x{:x}, size: 0x{:x}, flags: 0x:{:x}",
+        //        section.addr, section.size, section.flags);
+        //}
+
+        let kernel_start = elf_sections_tag.sections()
+            .filter(|s| s.is_allocated()).map(|s| s.addr).min().unwrap();
+        let kernel_end = elf_sections_tag.sections()
+            .filter(|s| s.is_allocated()).map(|s| s.addr + s.size).max().unwrap();
+
+        let multiboot_start = boot_info.start_address();
+        let multiboot_end = boot_info.end_address();
+        println!("    kernel_start: {:#x}, kernel_end: {:#x}", kernel_start, kernel_end);
+        println!("    multiboot_start: {:#x}, multiboot_end: {:#x}", multiboot_start, multiboot_end);
+
+        let mut frame_allocator = AreaFrameAllocator::new(kernel_start as usize, kernel_end as usize,
+            multiboot_start, multiboot_end, memory_map_tag.memory_areas());
+
+        println!("{:?}", frame_allocator.allocate_frame());
+
+        for i in 1..10 {
+            if let Some(frame) = frame_allocator.allocate_frame() {
+                println!("Frame {} at 0x{:x}", i, frame.start_address());
+            }
+        }
+
+        //memory::test_paging(&mut frame_allocator);
+        remap_the_kernel(&mut frame_allocator, boot_info);
+    });
 }
