@@ -19,6 +19,7 @@ extern crate x86;
 #[macro_use]
 mod debug;
 mod memory;
+mod sync;
 
 #[no_mangle]
 pub extern fn rust_main(multiboot_information_address: usize) {
