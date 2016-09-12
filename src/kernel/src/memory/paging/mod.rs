@@ -1,7 +1,7 @@
 use core::ops::{Deref, DerefMut};
 use multiboot2::BootInformation;
 
-use self::entry::*;
+pub use self::entry::*;
 use self::mapper::Mapper;
 use self::table::{Table, Level4};
 use self::temporary_page::TemporaryPage;
@@ -103,7 +103,7 @@ impl InactivePageTable {
 }
 
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Page {
     number: usize,
 }
@@ -113,6 +113,13 @@ impl Page {
     pub fn containing_address(address: VirtualAddress) -> Page {
         assert!(address < LOWER_HALF_MAX || address >= HIGHER_HALF_MIN, "invalid address: 0x{:x}", address);
         Page { number: address / PAGE_SIZE }
+    }
+
+    pub fn range_inclusive(start: Page, end: Page) -> PageIter {
+        PageIter {
+            start: start,
+            end: end,
+        }
     }
 
     pub fn start_address(&self) -> VirtualAddress {
@@ -136,7 +143,26 @@ impl Page {
     }
 }
 
-pub fn remap_the_kernel<A>(allocator: &mut A, boot_info: &BootInformation)
+pub struct PageIter {
+    start: Page,
+    end: Page,
+}
+
+impl Iterator for PageIter {
+    type Item = Page;
+
+    fn next(&mut self) -> Option<Page> {
+        if self.start <= self.end {
+            let page = self.start;
+            self.start.number += 1;
+            Some(page)
+        } else {
+            None
+        }
+    }
+}
+
+pub fn remap_the_kernel<A>(allocator: &mut A, boot_info: &BootInformation) -> ActivePageTable
     where A: FrameAllocator {
 
     let mut temporary_page = TemporaryPage::new(Page { number: 0xcafebabe }, allocator);
@@ -189,6 +215,8 @@ pub fn remap_the_kernel<A>(allocator: &mut A, boot_info: &BootInformation)
     let old_p4_page = Page::containing_address(old_table.p4_frame.start_address());
     active_table.unmap(old_p4_page, allocator);
     println!("guard page at {:#x}", old_p4_page.start_address());
+
+    active_table
 }
 
 pub fn test_paging<A>(allocator: &mut A) where A: FrameAllocator {

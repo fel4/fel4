@@ -42,6 +42,8 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     use alloc::boxed::Box;
     let heap_test = Box::new(42);
 
+    println!("It allocated and didn't crash!");
+
     loop {}
 }
 
