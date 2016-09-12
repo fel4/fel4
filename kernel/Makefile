@@ -10,7 +10,7 @@ SHARD_KERNEL_ISO_PATH := $(SHARD_ISO_ROOT)/boot/kernel.bin
 SHARD_GRUB_CONFIG := $(SHARD_ISO_ROOT)/boot/grub/grub.cfg
 
 SHARD_TARGET := x86_64-unknown-linux-gnu
-SHARD_RUST_STATICLIB := $(SHARD_KERNEL_ROOT)/target/$(SHARD_TARGET)/debug/libshard_kernel.a
+SHARD_RUST_STATICLIB := $(SHARD_ROOT)/target/$(SHARD_TARGET)/debug/libshard_kernel.a
 
 include $(SHARD_KERNEL_ARCH_ROOT)/shard.mk
 

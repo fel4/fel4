@@ -2,5 +2,6 @@
 /*.log
 /.vagrant/
 /shard.iso
-/src/kernel/Cargo.lock
-/src/kernel/target/
+/**/Cargo.lock
+target/
+
