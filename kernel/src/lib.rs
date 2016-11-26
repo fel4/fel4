@@ -54,7 +54,9 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     interrupts::init();
 
     // test divide by zero.
-    divide_by_zero();
+    //divide_by_zero();
+    // test invalid opcode.
+    //unsafe { asm!("ud2") } 
 
     println!("It didn't crash!");
 
