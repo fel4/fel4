@@ -56,7 +56,9 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     // test divide by zero.
     //divide_by_zero();
     // test invalid opcode.
-    //unsafe { asm!("ud2") } 
+    //unsafe { asm!("ud2") }
+    // provoke a page fault
+    //unsafe { *(0xdeadbeaf as *mut u64) = 42 }; 
 
     println!("It didn't crash!");
 
