@@ -1,4 +1,5 @@
 #![feature(alloc)]
+#![feature(asm)]
 #![feature(collections)]
 #![feature(const_fn)]
 #![feature(lang_items)]
@@ -6,11 +7,14 @@
 #![no_std]
 
 extern crate alloc;
+extern crate bit_field;
 #[macro_use]
 extern crate bitflags;
 extern crate bump_allocator;
 #[macro_use]
 extern crate collections;
+#[macro_use]
+extern crate lazy_static;
 extern crate multiboot2;
 extern crate rlibc;
 extern crate spin;
@@ -18,8 +22,15 @@ extern crate x86;
 
 #[macro_use]
 mod debug;
+mod interrupts;
 mod memory;
 mod sync;
+
+fn divide_by_zero() {
+    unsafe {
+        asm!("mov dx, 0; div dx" ::: "ax", "dx" : "volatile", "intel")
+    }
+}
 
 #[no_mangle]
 pub extern fn rust_main(multiboot_information_address: usize) {
@@ -36,6 +47,12 @@ pub extern fn rust_main(multiboot_information_address: usize) {
 
     // initialize memory layout.
     memory::init(boot_info);
+
+    // initialize IDT.
+    interrupts::init();
+
+    // test divide by zero.
+    divide_by_zero();
 
     println!("It didn't crash!");
 
