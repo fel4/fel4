@@ -20,6 +20,7 @@ extern crate lazy_static;
 extern crate multiboot2;
 extern crate rlibc;
 extern crate spin;
+#[macro_use]
 extern crate x86;
 
 #[macro_use]
@@ -53,12 +54,14 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     // initialize IDT.
     interrupts::init();
 
+    // cause a breakpoint.
+    unsafe { int!(3) };
     // test divide by zero.
     //divide_by_zero();
     // test invalid opcode.
     //unsafe { asm!("ud2") }
     // provoke a page fault
-    //unsafe { *(0xdeadbeaf as *mut u64) = 42 }; 
+    //unsafe { *(0xdeadbeaf as *mut u64) = 42 };
 
     println!("It didn't crash!");
 
