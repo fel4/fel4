@@ -1,8 +1,10 @@
 #![feature(alloc)]
 #![feature(asm)]
 #![feature(collections)]
+#![feature(core_intrinsics)]
 #![feature(const_fn)]
 #![feature(lang_items)]
+#![feature(naked_functions)]
 #![feature(unique)]
 #![no_std]
 
