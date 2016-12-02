@@ -109,12 +109,12 @@ struct ExceptionStackFrame {
 pub fn init() { IDT.load(); }
 
 extern "C" fn breakpoint_handler(stack_frame: &ExceptionStackFrame) {
-    let stack_frame = unsafe { &*stack_frame };
+    let stack_frame = &*stack_frame;
     println!("\nEXCEPTION: BREAKPOINT at {:#x}\n{:#?}", stack_frame.instruction_ptr, stack_frame);
 }
 
 extern "C" fn divide_by_zero_handler(stack_frame: &ExceptionStackFrame) {
-    println!("\nEXCEPTION: DIVIDE BY ZERO!\n{:#?}", unsafe { &*stack_frame });
+    println!("\nEXCEPTION: DIVIDE BY ZERO!\n{:#?}", &*stack_frame);
     loop {}
 }
 
@@ -127,5 +127,5 @@ extern "C" fn page_fault_handler(stack_frame: &ExceptionStackFrame, error_code: 
     use x86::controlregs;
     print!("\nEXCEPTION: PAGE FAULT while accessing {:#x}\
             \nwith error code: {:?}\n{:#?}",
-        unsafe { controlregs::cr2() }, PageFaultErrorCode::from_bits(error_code).unwrap(), unsafe { &*stack_frame });
+        unsafe { controlregs::cr2() }, PageFaultErrorCode::from_bits(error_code).unwrap(), &*stack_frame);
 }

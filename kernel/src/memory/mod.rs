@@ -64,7 +64,6 @@ pub struct FrameBlock(u64);
 
 impl FrameBlock {
 
-
     pub fn block_size(&self) -> u64 {
         1 << (self.0 & frame_block_consts::BLOCK_SIZE_MASK)
     }
@@ -123,7 +122,7 @@ pub fn init(boot_info: &BootInformation) {
         //memory::test_paging(&mut frame_allocator);
         let mut active_table = remap_the_kernel(&mut frame_allocator, boot_info);
 
-        use self::paging::{Page, WRITEABLE};
+        use self::paging::Page;
         use bump_allocator::{HEAP_START, HEAP_SIZE};
 
         let heap_start_page = Page::containing_address(HEAP_START);

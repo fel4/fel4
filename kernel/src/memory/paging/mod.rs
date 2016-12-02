@@ -3,7 +3,6 @@ use multiboot2::BootInformation;
 
 pub use self::entry::*;
 use self::mapper::Mapper;
-use self::table::{Table, Level4};
 use self::temporary_page::TemporaryPage;
 
 use memory::{PAGE_SIZE, Frame, FrameAllocator};
@@ -177,7 +176,6 @@ pub fn remap_the_kernel<A>(allocator: &mut A, boot_info: &BootInformation) -> Ac
         let elf_sections_tag = boot_info.elf_sections_tag()
             .expect("Memory map tag required");
         for section in elf_sections_tag.sections() {
-            use self::entry::WRITEABLE;
 
             if !section.is_allocated() {
                 // section is not loaded into memory.

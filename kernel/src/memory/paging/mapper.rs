@@ -1,9 +1,9 @@
 use core::ptr::Unique;
 
-use super::{ActivePageTable, InactivePageTable, Page, PhysicalAddress, VirtualAddress};
+use super::{Page, PhysicalAddress, VirtualAddress};
 use super::ENTRY_COUNT;
 use super::entry::*;
-use super::table::{Level1, Level4, Table};
+use super::table::{Level4, Table};
 
 use memory::{PAGE_SIZE, Frame, FrameAllocator};
 
