@@ -1,3 +1,4 @@
+mod apic;
 mod idt;
 
 macro_rules! save_scratch_registers {
@@ -106,7 +107,10 @@ struct ExceptionStackFrame {
     stack_segment: u64,
 }
 
-pub fn init() { IDT.load(); }
+pub fn init() {
+    IDT.load();
+    apic::init();
+}
 
 extern "C" fn breakpoint_handler(stack_frame: &ExceptionStackFrame) {
     let stack_frame = &*stack_frame;

@@ -27,6 +27,7 @@ extern crate x86;
 mod debug;
 mod interrupts;
 mod memory;
+mod sel4;
 mod sync;
 
 fn divide_by_zero() {
