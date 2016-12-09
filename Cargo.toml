@@ -1,2 +1,2 @@
 [workspace]
-members = ["kernel"]
+members = ["loader/multiboot", "kernel"]
