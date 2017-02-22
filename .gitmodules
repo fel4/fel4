@@ -1,3 +1,6 @@
 [submodule "kernel"]
 	path = kernel
 	url = https://github.com/fel4/kernel.git
+[submodule "jam"]
+	path = tools/jam
+	url = https://github.com/fel4/jam.git
