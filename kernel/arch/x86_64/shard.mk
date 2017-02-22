@@ -1,5 +1,0 @@
-KERNEL_BINARY_FORMAT := elf64
-
-LD_ARGS := $(LD_ARGS) -n --gc-sections
-
-NASM_FLAGS := $(NASM_FLAGS) -f$(KERNEL_BINARY_FORMAT)
