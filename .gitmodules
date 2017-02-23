@@ -7,3 +7,6 @@
 [submodule "libuv"]
 	path = external/libuv
 	url = https://github.com/libuv/libuv.git
+[submodule "binutils"]
+	path = tools/binutils
+	url = https://github.com/fel4/binutils.git
