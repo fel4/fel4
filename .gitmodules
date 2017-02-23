@@ -4,3 +4,6 @@
 [submodule "jam"]
 	path = tools/jam
 	url = https://github.com/fel4/jam.git
+[submodule "libuv"]
+	path = external/libuv
+	url = https://github.com/libuv/libuv.git
