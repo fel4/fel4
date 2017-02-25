@@ -1,0 +1,3 @@
+TOP = .
+
+SubInclude TOP kernel ;

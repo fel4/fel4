@@ -1,6 +1,7 @@
 [package]
 name = "disc_image"
 version = "0.1.0"
-authors = ["Cary Haynie <cary.haynie@gamesim.com>"]
+authors = ["Cary Haynie <cary.haynie@gmail.com>"]
 
 [dependencies]
+nom = "^2.0"
