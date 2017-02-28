@@ -1,0 +1,48 @@
+NASM = nasm ;
+
+rule Nasm 
+{
+    local target = $(1) ;
+    local asms = $(2) ; 
+    local flags = $(3) ;
+
+    for asm in $(asms)
+    {
+        SEARCH on $(asm) = $(SEARCH_SOURCE) ;
+        local obj = $(asm:S=$(SUFOBJ):R=build) ;
+        LOCATE on $(obj) = $(obj:D) ;
+        MakeLocate $(obj) ;
+        Depends $(target) : $(obj) ;
+        AS on $(obj) = $(NASM) ;
+        ASFLAGS on $(obj) = $(flags) ;
+        As $(obj) : ($asm) ;
+    }
+
+    Depends $(asms) : $(target) ;
+    SEARCH on ($(asms) = $(SEARCH_SOURCE) ;
+    AS on $(asms) = $(NASM) ;
+    ASFLAGS on $(asms) = $(flags) ;
+}
+
+rule Rust.Cargo
+{
+    local target = $(1) ;
+    local projdir = $(2) ;
+
+    Always $(projdir) ;
+    NotFile $(projdir) ;
+    Depends $(projdir) : $(target) ;
+
+}
+
+rule Kernel
+{
+    local target = $(1) ;
+    local out_file = $(2) ;
+    local platform = $(3) ;
+
+    SubInclude TOP kernel arch $(platform) 
+}
+
+ 
+Echo $(AS) ;
