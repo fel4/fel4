@@ -1,9 +1,15 @@
 switch $(OS)
 {
     case NT :
+        CARGO ?= cargo.exe ;
         NASM ?= nasm.exe ;
+        XARGO ?= xargo.exe ;
     case * :
+        CARGO ?= cargo ;
         NASM ?= nasm ;
+        POPD ?= popd ;
+        PUSHD ?= pushd ;
+        xargo ?= xargo ;
 }
 
 rule Nasm 
@@ -27,30 +33,66 @@ rule Nasm
     }
 }
 
+rule Rust.Cargo
+{
+    local projdir = $(1) ;
+
+    local target = $(projdir:G=<Cargo>) ;
+
+    ACTION on $(target) = $(2) ;
+    ACTION on $(target) ?= build ;
+    cargoDir on $(target) = $(projdir) ;
+    CARGO on $(target) ?= $(CARGO) ;
+
+    Always $(target) ;
+    NotFile $(target) ;
+    
+    return $(target) ;
+}
+
+rule Rust.Xargo
+{
+    local _oldCargo = $(CARGO) ;
+    CARGO = $(XARGO) ;
+    local ret = [ Rust.Cargo $(1) ] ;
+    CARGO = $(_oldCargo) ;
+    return $(ret) ;
+}
+
+rule Kernel
+{
+    local out_file = $(1) ;
+    local platform = $(2) ;
+
+    local _t = kernel.$(platform) ;
+
+    NotFile $(_t) ;
+    Depends $(_t) : $(out_file) ;
+    Depends all : $(_t) ;
+
+    local out_dir = build$(SLASH)$(platform) ;
+
+    MakeLocate $(out_file) : $(out_dir) ;
+
+    SubInclude TOP kernel ;
+
+    local kernel_t = [ Rust.Xargo $(SUBDIR) ] ;
+
+    Depends $(_t) : $(kernel_t) ;
+
+    SubInclude TOP kernel arch $(platform) ;
+
+    Nasm $(_t) : $(asms) : $(flags) ;
+}
+
 actions Nasm.As
 {
     $(AS) $(ASFLAGS) $(2) -o $(1)
 }
 
-rule Rust.Cargo
+actions Rust.Cargo
 {
-    local target = $(1) ;
-    local projdir = $(2) ;
-
-    Always $(projdir) ;
-    NotFile $(projdir) ;
-    Depends $(projdir) : $(target) ;
-
+    $(PUSHD) $(cargoDir)
+    $(CARGO) $(ACTION)
+    $(POPD)
 }
-
-rule Kernel
-{
-    local target = $(1) ;
-    local out_file = $(2) ;
-    local platform = $(3) ;
-
-    SubInclude TOP kernel arch $(platform) ;
-}
-
- 
-Echo $(AS) ;

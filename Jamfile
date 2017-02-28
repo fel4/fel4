@@ -1,3 +1,4 @@
 TOP = . ;
 SubDir TOP ;
-SubInclude TOP kernel ;
+
+Kernel kernel.bin : x86_64 ;
