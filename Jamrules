@@ -1,4 +1,10 @@
-NASM = nasm ;
+switch $(OS)
+{
+    case NT :
+        NASM ?= nasm.exe ;
+    case * :
+        NASM ?= nasm ;
+}
 
 rule Nasm 
 {
@@ -9,19 +15,21 @@ rule Nasm
     for asm in $(asms)
     {
         SEARCH on $(asm) = $(SEARCH_SOURCE) ;
-        local obj = $(asm:S=$(SUFOBJ):R=build) ;
-        LOCATE on $(obj) = $(obj:D) ;
-        MakeLocate $(obj) ;
+        local obj = $(asm:S=$(SUFOBJ):D=) ;
+        local _t = $(asm:R=build) ;
+        _t = $(_t:D) ;
+        MakeLocate $(obj) : $(_t) ;
         Depends $(target) : $(obj) ;
+        Depends $(obj) : $(asm) ;
         AS on $(obj) = $(NASM) ;
         ASFLAGS on $(obj) = $(flags) ;
-        As $(obj) : ($asm) ;
+        Nasm.As $(obj) : $(asm) ;
     }
+}
 
-    Depends $(asms) : $(target) ;
-    SEARCH on ($(asms) = $(SEARCH_SOURCE) ;
-    AS on $(asms) = $(NASM) ;
-    ASFLAGS on $(asms) = $(flags) ;
+actions Nasm.As
+{
+    $(AS) $(ASFLAGS) $(2) -o $(1)
 }
 
 rule Rust.Cargo
@@ -41,7 +49,7 @@ rule Kernel
     local out_file = $(2) ;
     local platform = $(3) ;
 
-    SubInclude TOP kernel arch $(platform) 
+    SubInclude TOP kernel arch $(platform) ;
 }
 
  
