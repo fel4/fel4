@@ -1,4 +1,3 @@
-TOP = . ;
 SubDir TOP ;
 
 Kernel kernel.bin : x86_64 ;

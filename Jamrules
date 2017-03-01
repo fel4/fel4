@@ -35,28 +35,11 @@ rule Nasm
 
 rule Rust.Cargo
 {
-    local projdir = $(1) ;
-
-    local target = $(projdir:G=<Cargo>) ;
-
-    ACTION on $(target) = $(2) ;
-    ACTION on $(target) ?= build ;
-    cargoDir on $(target) = $(projdir) ;
-    CARGO on $(target) ?= $(CARGO) ;
-
-    Always $(target) ;
-    NotFile $(target) ;
-    
-    return $(target) ;
-}
-
-rule Rust.Xargo
-{
-    local _oldCargo = $(CARGO) ;
-    CARGO = $(XARGO) ;
-    local ret = [ Rust.Cargo $(1) ] ;
-    CARGO = $(_oldCargo) ;
-    return $(ret) ;
+    Always $(>) ;
+    NotFile $(>) ;
+    Depends $(<) : $(>) ;
+    CARGO on $(<) = $(CARGO) ;
+    CMD on $(<) = $(3) ;
 }
 
 rule Kernel
@@ -64,7 +47,7 @@ rule Kernel
     local out_file = $(1) ;
     local platform = $(2) ;
 
-    local _t = kernel.$(platform) ;
+    _t = kernel.$(platform) ;
 
     NotFile $(_t) ;
     Depends $(_t) : $(out_file) ;
@@ -76,13 +59,7 @@ rule Kernel
 
     SubInclude TOP kernel ;
 
-    local kernel_t = [ Rust.Xargo $(SUBDIR) ] ;
-
-    Depends $(_t) : $(kernel_t) ;
-
     SubInclude TOP kernel arch $(platform) ;
-
-    Nasm $(_t) : $(asms) : $(flags) ;
 }
 
 actions Nasm.As
@@ -92,7 +69,5 @@ actions Nasm.As
 
 actions Rust.Cargo
 {
-    $(PUSHD) $(cargoDir)
-    $(CARGO) $(ACTION)
-    $(POPD)
+    $(CARGO) $(CMD) -p $(>)
 }
