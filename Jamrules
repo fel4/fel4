@@ -3,13 +3,11 @@ switch $(OS)
     case NT :
         CARGO ?= cargo.exe ;
         NASM ?= nasm.exe ;
-        XARGO ?= xargo.exe ;
     case * :
         CARGO ?= cargo ;
         NASM ?= nasm ;
         POPD ?= popd ;
         PUSHD ?= pushd ;
-        xargo ?= xargo ;
 }
 
 rule Nasm 
@@ -69,5 +67,5 @@ actions Nasm.As
 
 actions Rust.Cargo
 {
-    $(CARGO) $(CMD) -p $(>)
+    $(CARGO) $(CMD) -p $(>) $(CARGOFLAGS)
 }
