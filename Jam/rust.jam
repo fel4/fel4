@@ -1,0 +1,21 @@
+switch $(OS)
+{
+    case NT :
+        CARGO ?= cargo.exe ;
+    case * :
+        CARGO ?= cargo ;
+}
+
+rule Rust.Cargo
+{
+    Always $(>) ;
+    NotFile $(>) ;
+    Depends $(<) : $(>) ;
+    CARGO on $(<) = $(CARGO) ;
+    CMD on $(<) = $(3) ;
+}
+
+actions Rust.Cargo
+{
+    $(CARGO) $(CMD) -p $(>) $(CARGOFLAGS)
+}
