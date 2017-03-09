@@ -6,16 +6,84 @@ switch $(OS)
         CARGO ?= cargo ;
 }
 
-rule Rust.Cargo
+rule Rust.Cargo.GetOutputDir
 {
-    Always $(>) ;
-    NotFile $(>) ;
-    Depends $(<) : $(>) ;
-    CARGO on $(<) = $(CARGO) ;
-    CMD on $(<) = $(3) ;
+    return $(TOP)/target/$(<)/$(>) ;
 }
 
-actions Rust.Cargo
+rule Rust.Cargo.GetVar
 {
-    $(CARGO) $(CMD) -p $(>) $(CARGOFLAGS)
+    local ret ;
+    if ! $(<) { Exit "Rust.Cargo.GetVar: Invalid argument" ; }
+    on $(<)
+    {
+        ret = $($(>)) ;
+    }
+    if ! $(ret)
+    {
+        ret = $(FEL4_$(>)) ;
+    }
+    if ! $(ret)
+    {
+        Exit "Unable to resolve $(>) on $(<), and unable to fall back to FEL4_$(>)!" ;
+    }
+    return $(ret) ;
+}
+
+rule Rust.Cargo._GetFileForCrateType
+{
+    switch $(>)
+    {
+        case dylib :
+        case cdylib :
+            return lib$(<:S=.so) ;
+        case staticlib :
+            return lib$(<:S=.a) ;
+        case bin :
+            return $(<:S=) ;
+        case * :
+            return $(<) ;
+    }
+}
+
+rule Rust.Cargo
+{
+    local crate_type = [ Rust.Cargo.GetVar $(<) : CRATE_TYPE ] ;
+    local target = [ Rust.Cargo.GetVar $(<) : TARGET ] ;
+    local mode = [ Rust.Cargo.GetVar $(<) : MODE ] ;
+
+    local out_file = [ Rust.Cargo._GetFileForCrateType $(<) : $(crate_type) ] ;
+    if [ GetTargetVar $(<) : LOCATE ]
+    {
+        MakeLocate $(out_file) : [ GetTargetVar $(<) : LOCATE ] ;
+    }
+    else
+    {
+        MakeLocate $(out_file) : [ FDirName $(TOP) build $(target) $(mode) ] ;
+    }
+
+    local cargo_out = $(out_file:G=<cargo>) ;
+    SEARCH on $(cargo_out) = [ Rust.Cargo.GetOutputDir $(target) : $(mode) ] ;
+
+    Always $(<) ;
+    NotFile $(<) ;
+    Depends $(<) : $(out_file) ;
+    Depends $(out_file) : $(cargo_out) ;
+
+    CARGO on $(cargo_out) = $(CARGO) ;
+    CMD on $(cargo_out) = $(>) ;
+    PKGID on $(cargo_out) = $(<) ;
+    CARGOFLAGS on $(cargo_out) = --target=$(target) ;
+    if $(mode) = "release"
+    {
+        CARGOFLAGS on $(cargo_out) += --release ;
+    }
+
+    Rust.Cargo1 $(cargo_out) ;
+    File $(out_file) : $(cargo_out) ;
+}
+
+actions Rust.Cargo1
+{
+    $(CARGO) $(CMD) -p $(PKGID) $(CARGOFLAGS)
 }
