@@ -8,7 +8,7 @@ switch $(OS)
 
 rule Rust.Cargo.GetOutputDir
 {
-    return $(TOP)/target/$(<)/$(>) ;
+    return [ FDirName $(TOP) target $(<) $(>) ] ;
 }
 
 rule Rust.Cargo.GetVar
@@ -63,7 +63,7 @@ rule Rust.Cargo
     }
 
     local cargo_out = $(out_file:G=<cargo>) ;
-    SEARCH on $(cargo_out) = [ Rust.Cargo.GetOutputDir $(target) : $(mode) ] ;
+    MakeLocate $(cargo_out) : [ Rust.Cargo.GetOutputDir $(target) : $(mode) ] ;
 
     Always $(<) ;
     NotFile $(<) ;

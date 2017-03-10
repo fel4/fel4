@@ -6,6 +6,8 @@ switch $(OS)
         NASM ?= nasm ;
 }
 
+Echo $(FEL4_LD) ;
+
 rule Nasm 
 {
     local target = $(1) ;
@@ -38,7 +40,7 @@ rule Kernel
     Depends $(_t) : $(out_file) ;
     Depends all : $(_t) ;
 
-    local out_dir = build$(SLASH)$(platform) ;
+    local out_dir = [ FDirName build $(platform) ] ;
 
     MakeLocate $(out_file) : $(out_dir) ;
 
