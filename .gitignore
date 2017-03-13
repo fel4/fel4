@@ -4,4 +4,7 @@
 /shard.iso
 /**/Cargo.lock
 target/
+/jam
+/jam.exe
+
 
