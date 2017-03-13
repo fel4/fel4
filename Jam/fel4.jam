@@ -1,33 +1,5 @@
-switch $(OS)
-{
-    case NT :
-        NASM ?= nasm.exe ;
-    case * :
-        NASM ?= nasm ;
-}
 
-Echo $(FEL4_LD) ;
-
-rule Nasm 
-{
-    local target = $(1) ;
-    local asms = $(2) ; 
-    local flags = $(3) ;
-
-    for asm in $(asms)
-    {
-        SEARCH on $(asm) = $(SEARCH_SOURCE) ;
-        local obj = $(asm:S=$(SUFOBJ):D=) ;
-        local _t = $(asm:R=build) ;
-        _t = $(_t:D) ;
-        MakeLocate $(obj) : $(_t) ;
-        Depends $(target) : $(obj) ;
-        Depends $(obj) : $(asm) ;
-        AS on $(obj) = $(NASM) ;
-        ASFLAGS on $(obj) = $(flags) ;
-        Nasm.As $(obj) : $(asm) ;
-    }
-}
+LINK = $(LD) ;
 
 rule Kernel
 {
@@ -49,7 +21,3 @@ rule Kernel
     SubInclude TOP kernel arch $(platform) ;
 }
 
-actions Nasm.As
-{
-    $(AS) $(ASFLAGS) $(2) -o $(1)
-}

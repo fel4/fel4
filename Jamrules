@@ -1,2 +1,4 @@
+include Jam/binutils.jam ;
 include Jam/fel4.jam ;
+include Jam/nasm.jam ;
 include Jam/rust.jam ;

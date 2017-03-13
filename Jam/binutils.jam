@@ -1,0 +1,9 @@
+actions updated together piecemeal Archive
+{
+	$(AR) $(<) $(>)
+}
+
+actions Link bind NEEDLIBS
+{
+    $(LINK) $(LINKFLAGS) -o $(<) $(UNDEFS) $(>) $(NEEDLIBS) "$(LINKLIBS)"
+}

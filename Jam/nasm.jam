@@ -1,0 +1,14 @@
+switch $(OS)
+{
+    case NT :
+        AS = $(NASM:E=nasm.exe) ;
+    case * :
+        AS = $(NASM:E=nasm) ;
+}
+ASFLAGS = ;
+ASHDRS = ;
+
+actions As
+{
+    $(AS) $(ASFLAGS) -o $(<) $(>)
+}
