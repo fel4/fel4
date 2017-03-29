@@ -10,3 +10,6 @@
 [submodule "binutils"]
 	path = tools/binutils
 	url = https://github.com/fel4/binutils.git
+[submodule "gcom"]
+	path = libs/gcom
+	url = https://github.com/caryhaynie/gcom.git
