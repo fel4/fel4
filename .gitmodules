@@ -13,3 +13,6 @@
 [submodule "gcom"]
 	path = libs/gcom
 	url = https://github.com/caryhaynie/gcom.git
+[submodule "build_tools"]
+	path = tools/build_tools
+	url = https://github.com/fel4/build_tools.git
