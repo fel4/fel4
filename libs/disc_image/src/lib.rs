@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 #[macro_use]
 extern crate nom;
 
@@ -21,6 +23,36 @@ enum NumberFormat {
     sint32_LSBMSB(i32,i32)
 }
 
+struct DateTime {
+    year: u16,
+    month: u8,
+    day: u8,
+    hour: u8,
+    minute: u8,
+    second: u8,
+    second_part: u8,
+    tmz_offset: u8
+}
+
+impl DateTime {
+    fn new(year: u16, month: u8, day: u8, hour: u8, minute: u8, second: u8, sp: u8, tmz: u8) -> DateTime {
+        DateTime {
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            second: second,
+            second_part: sp,
+            tmz_offset: tmz
+        }
+    }
+
+    pub fn now() -> DateTime { unimplemented!(); }
+
+    pub fn parse(input: &[u8]) -> DateTime { unimplemented!(); }
+}
+
 struct Sector(pub [u8; SECTOR_SIZE]);
 
 
@@ -38,6 +70,7 @@ mod tests {
     use std::io::Read;
 
     #[test]
+    #[ignore]
     fn test_file_sanity_check() {
         use super::SECTOR_SIZE;
 
