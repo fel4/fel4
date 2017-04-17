@@ -23,6 +23,11 @@ enum NumberFormat {
     sint32_LSBMSB(i32,i32)
 }
 
+enum StringEncoding {
+    AString(String),
+    DString(String)
+}
+
 struct DateTime {
     year: u16,
     month: u8,
@@ -50,8 +55,14 @@ impl DateTime {
 
     pub fn now() -> DateTime { unimplemented!(); }
 
-    pub fn parse(input: &[u8]) -> DateTime { unimplemented!(); }
+    //named!(pub parse<&[u8], DateTime>,
+    //    do_parse!(
+    //        year:
+    //    )
+    //);
 }
+
+
 
 struct Sector(pub [u8; SECTOR_SIZE]);
 
