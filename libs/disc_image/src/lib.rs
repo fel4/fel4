@@ -23,9 +23,34 @@ enum NumberFormat {
     sint32_LSBMSB(i32,i32)
 }
 
-enum StringEncoding {
-    AString(String),
-    DString(String)
+struct AString(String);
+
+impl AString {
+    pub fn is_valid_byte(b: u8) -> bool {
+        match b {
+            b'A'...b'Z' => true,
+            b'0'...b'9' => true,
+            b'_' => true,
+            _ => false
+        }
+    }
+}
+
+struct DString(String);
+
+impl DString {
+    pub fn is_valid_byte(b: u8) -> bool {
+        if AString::is_valid_byte(b) {
+            true
+        } else {
+            match b {
+                b'!' | b'"' | b'%' | b'&' | b'\'' | b'(' | b')' |
+                b'*' | b'+' | b',' | b'-' | b'.' | b'/' | b':' |
+                b';' | b'<' | b'=' | b'>' | b'?' => true,
+                _ => false
+            }
+        }
+    }
 }
 
 struct DateTime {
@@ -80,11 +105,34 @@ mod tests {
     use std::fs::File;
     use std::io::Read;
 
+    use super::*;
+
+    #[test]
+    fn astring_valid_byte() {
+        assert!(AString::is_valid_byte(b'A'));
+    }
+
+    #[test]
+    #[should_panic]
+    fn astring_invalid_byte() {
+        assert!(AString::is_valid_byte(b'!'));
+    }
+
+    #[test]
+    fn dstring_valid_byte() {
+        assert!(DString::is_valid_byte(b'!'));
+    }
+
+    #[test]
+    #[should_panic]
+    fn dstring_invalid_byte() {
+        assert!(DString::is_valid_byte(b'a'));
+    }
+
+
     #[test]
     #[ignore]
     fn test_file_sanity_check() {
-        use super::SECTOR_SIZE;
-
         let mut buffer: Vec<u8> = Vec::new();
         let mut file = File::open("../../shard.iso").unwrap();
         let len = file.read_to_end(&mut buffer).unwrap();
