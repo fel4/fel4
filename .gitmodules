@@ -16,3 +16,6 @@
 [submodule "build_tools"]
 	path = tools/build_tools
 	url = https://github.com/fel4/build_tools.git
+[submodule "disc_image"]
+	path = libs/disc_image
+	url = https://github.com/fel4/disc_image.git
