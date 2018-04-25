@@ -1,0 +1,15 @@
+[package]
+name = "fel4"
+version = "0.1.0"
+authors = ["Cary Haynie <cary.haynie@gmail.com>"]
+
+[dependencies]
+spin = "0.4.6"
+volatile = "0.2.3"
+
+[dependencies.lazy_static]
+version = "1.0"
+features = ["spin_no_std"]
+
+[package.metadata.bootimage]
+default-target = "x86_64-fel4"
