@@ -3,6 +3,9 @@ name = "fel4"
 version = "0.1.0"
 authors = ["Cary Haynie <cary.haynie@gmail.com>"]
 
+[dev-dependencies]
+array-init = "0.0.3"
+
 [dependencies]
 spin = "0.4.6"
 volatile = "0.2.3"
