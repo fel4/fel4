@@ -13,11 +13,7 @@ use fel4::exit_qemu;
 #[cfg(not(test))]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello, World{}", "!");
-    serial_println!("Hello, Host{}", "!");
-
-    unsafe { exit_qemu(); }
-    loop {}
+    panic!();
 }
 
 #[cfg(not(test))]
@@ -26,5 +22,7 @@ pub extern "C" fn _start() -> ! {
 pub fn panic(
     _info: &PanicInfo
 ) -> ! {
+    serial_println!("ok");
+    unsafe { exit_qemu(); }
     loop {}
 }
