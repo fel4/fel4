@@ -12,8 +12,9 @@ extern crate lazy_static;
 extern crate x86_64;
 
 use core::panic::PanicInfo;
+use core::sync::atomic::{AtomicUsize, Ordering};
 use fel4::exit_qemu;
-use x86_64::structures::idt::{ExceptionStackFrame,InterruptDescriptorTable};
+use x86_64::structures::idt::{ExceptionStackFrame, InterruptDescriptorTable};
 
 lazy_static! {
     static ref IDT: InterruptDescriptorTable = {
@@ -23,25 +24,35 @@ lazy_static! {
     };
 }
 
+static BREAKPOINT_HANDLER_CALLED: AtomicUsize = AtomicUsize::new(0);
+
 pub fn init_idt() {
     IDT.load();
 }
 
-extern "x86-interrupt" fn breakpoint_handler(stack_frame: &mut ExceptionStackFrame) {
-    println!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
+extern "x86-interrupt" fn breakpoint_handler(_: &mut ExceptionStackFrame) {
+    BREAKPOINT_HANDLER_CALLED.fetch_add(1, Ordering::SeqCst);
 }
 
 #[cfg(not(test))]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello, World{}", "!");
-    serial_println!("Hello, Host{}", "!");
-
     init_idt();
 
     x86_64::instructions::int3();
 
-    println!("It did not crash!");
+    match BREAKPOINT_HANDLER_CALLED.load(Ordering::SeqCst) {
+        1 => serial_println!("ok"),
+        0 => {
+            serial_println!("failed");
+            serial_println!("Breakpoint handler was never called");
+        },
+        other => {
+            serial_println!("failed");
+            serial_println!("Breakpoint handler was called {} times", other);
+        }
+    }
+    unsafe { exit_qemu(); }
     loop {}
 }
 
