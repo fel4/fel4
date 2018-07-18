@@ -35,25 +35,23 @@ extern "x86-interrupt" fn breakpoint_handler(stack_frame: &mut ExceptionStackFra
     println!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
 }
 
-extern "x86-interrupt" fn double_fault_handler(stack_frame: &mut ExceptionStackFrame, _error_code: u64) {
-    println!("EXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
-    loop{}
+extern "x86-interrupt" fn double_fault_handler(_stack_frame: &mut ExceptionStackFrame, _error_code: u64) {
+    serial_println!("ok");
+    unsafe { exit_qemu(); }
+    loop {}
 }
 
 #[cfg(not(test))]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello, World{}", "!");
-    serial_println!("Hello, Host{}", "!");
 
     fel4::gdt::init();
     init_idt();
 
+    #[allow(unconditional_recursion)]
     fn stack_overflow() { stack_overflow(); }
 
     stack_overflow();
-
-    println!("It did not crash!");
     loop {}
 }
 
