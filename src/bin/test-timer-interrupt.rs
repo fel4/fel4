@@ -33,33 +33,30 @@ pub fn init_idt() {
     IDT.load();
 }
 
-extern "x86-interrupt" fn breakpoint_handler(stack_frame: &mut ExceptionStackFrame) {
-    println!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
+extern "x86-interrupt" fn breakpoint_handler(_stack_frame: &mut ExceptionStackFrame) {
+    serial_println!("failed");
 }
 
-extern "x86-interrupt" fn double_fault_handler(stack_frame: &mut ExceptionStackFrame, _error_code: u64) {
-    println!("EXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
-    loop{}
+extern "x86-interrupt" fn double_fault_handler(_stack_frame: &mut ExceptionStackFrame, _error_code: u64) {
+    serial_println!("failed");
 }
 
 extern "x86-interrupt" fn timer_interrupt_handler(_stack_frame: &mut ExceptionStackFrame) {
-    print!(".");
-    unsafe { PICS.lock().notify_end_of_interrupt(interrupts::TIMER_INTERRUPT_ID); }
+    serial_println!("ok");
+    unsafe {
+        PICS.lock().notify_end_of_interrupt(interrupts::TIMER_INTERRUPT_ID);
+        exit_qemu();
+    }
 }
 
 #[cfg(not(test))]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello, World{}", "!");
-    serial_println!("Hello, Host{}", "!");
-
     fel4::gdt::init();
     init_idt();
     unsafe { PICS.lock().initialize(); }
 
     x86_64::instructions::interrupts::enable();
-
-    println!("It did not crash!");
     loop {}
 }
 
