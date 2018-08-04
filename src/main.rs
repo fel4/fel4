@@ -25,6 +25,8 @@ lazy_static! {
                 .set_stack_index(fel4::gdt::DOUBLE_FAULT_IST_INDEX);
         }
         idt[usize::from(interrupts::TIMER_INTERRUPT_ID)].set_handler_fn(timer_interrupt_handler);
+        idt[usize::from(interrupts::PIC1_SPURIOUS_ID)].set_handler_fn(pic1_spurious_handler);
+        idt[usize::from(interrupts::PIC2_SPURIOUS_ID)].set_handler_fn(pic2_spurious_handler);
         idt
     };
 }
@@ -45,6 +47,14 @@ extern "x86-interrupt" fn double_fault_handler(stack_frame: &mut ExceptionStackF
 extern "x86-interrupt" fn timer_interrupt_handler(_stack_frame: &mut ExceptionStackFrame) {
     print!(".");
     unsafe { PICS.lock().notify_end_of_interrupt(interrupts::TIMER_INTERRUPT_ID); }
+}
+
+extern "x86-interrupt" fn pic1_spurious_handler(_stack_frame: &mut ExceptionStackFrame) {
+    unsafe { PICS.lock().notify_end_of_interrupt(interrupts::PIC1_SPURIOUS_ID); }
+}
+
+extern "x86-interrupt" fn pic2_spurious_handler(_stack_frame: &mut ExceptionStackFrame) {
+    unsafe { PICS.lock().notify_end_of_interrupt(interrupts::PIC2_SPURIOUS_ID); }
 }
 
 #[cfg(not(test))]

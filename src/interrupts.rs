@@ -4,6 +4,8 @@ pub mod legacy_pic {
     const CMD_INIT: u8 = 0x11;
     const CMD_END_OF_INTERRUPT: u8 = 0x20;
     const CMD_8086_MODE:u8 = 0x01;
+    const CMD_READ_IRR: u8 = 0x0A;
+    const CMD_READ_ISR: u8 = 0x0B;
 
     const PIC1_CMD: u16 = 0x20;
     const PIC1_DATA: u16 = 0x21;
@@ -21,8 +23,33 @@ pub mod legacy_pic {
             self.offset <= interrupt_id && interrupt_id < self.offset + 8
         }
 
+        fn is_valid(&mut self, interrupt_id: u8) -> bool {
+            if self.handles_interrupt(interrupt_id) {
+                let idx = interrupt_id - self.offset;
+                if idx != 7 { return true ;} // "spurious" interrupts are always delivered on the lowest priority interrupt, ie the last one.
+                let mask = 1 << 7;
+                self.isr() & mask != 0 // if the appropriate ISR bit isn't set, it's a spurious interrupt.
+            } else {
+                false
+            }
+        }
+
         unsafe fn end_of_interrupt(&mut self) {
             self.command.write(CMD_END_OF_INTERRUPT);
+        }
+
+        fn irr(&mut self) -> u8 {
+            unsafe {
+                self.command.write(CMD_READ_IRR);
+                self.command.read()
+            }
+        }
+
+        fn isr(&mut self) -> u8 {
+            unsafe {
+                self.command.write(CMD_READ_ISR);
+                self.command.read()
+            }
         }
     }
 
@@ -91,12 +118,18 @@ pub mod legacy_pic {
 
         pub unsafe fn notify_end_of_interrupt(&mut self, interrupt_id: u8) {
             if self.handles_interrupt(interrupt_id) {
+                let mut need_pic0_eoi = false;
                 if self.pics[1].handles_interrupt(interrupt_id) {
-                    self.pics[1].end_of_interrupt();
+                    if self.pics[1].is_valid(interrupt_id) {
+                        self.pics[1].end_of_interrupt();
+                    }
+                    // pic[1] is chained through pic[0], so both pics
+                    // need to be notified for pic[1] interrupts.
+                    need_pic0_eoi = true;
                 }
-                // pic[1] is chained through pic[0], so both pics
-                // need to be notified for pic[1] interrupts.
-                self.pics[0].end_of_interrupt();
+                if need_pic0_eoi || self.pics[0].is_valid(interrupt_id) {
+                    self.pics[0].end_of_interrupt();
+                }
             }
         }
     }
@@ -109,6 +142,8 @@ pub const PIC1_OFFSET: u8 = 32;
 pub const PIC2_OFFSET: u8 = PIC1_OFFSET + 8;
 
 pub const TIMER_INTERRUPT_ID: u8 = PIC1_OFFSET;
+pub const PIC1_SPURIOUS_ID: u8 = PIC1_OFFSET + 7;
+pub const PIC2_SPURIOUS_ID: u8 = PIC2_OFFSET + 7;
 
 pub static PICS: spin::Mutex<ChainedPics> =
     spin::Mutex::new(unsafe {
