@@ -14,6 +14,7 @@ extern crate array_init;
 #[cfg(test)]
 extern crate std;
 
+pub mod caps;
 pub mod gdt;
 pub mod interrupts;
 pub mod serial;
