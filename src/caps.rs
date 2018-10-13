@@ -1,17 +1,22 @@
 #[derive(Debug, PartialEq)]
 pub enum TranslationError {
-    InsufficientBits(u32)
+    InsufficientBits(u32),
 }
 pub type TranslationResult = Result<(usize, u32), TranslationError>;
 
 pub struct CPtr(usize);
 
 impl CPtr {
-    pub const fn num_bits() -> u32 { (::core::mem::size_of::<usize>() * 8) as u32 }
+    pub const fn num_bits() -> u32 {
+        (::core::mem::size_of::<usize>() * 8) as u32
+    }
     pub fn translate_bits(&self, start_bit: u32, bits_to_translate: u32) -> TranslationResult {
         let bits_needed = start_bit + bits_to_translate;
-        if bits_needed > Self::num_bits() { Err(TranslationError::InsufficientBits(bits_needed - Self::num_bits())) }
-        else {
+        if bits_needed > Self::num_bits() {
+            Err(TranslationError::InsufficientBits(
+                bits_needed - Self::num_bits(),
+            ))
+        } else {
             let mask = 2usize.pow(bits_to_translate) - 1;
             let mask = mask.rotate_right(bits_needed);
             let ret = (self.0 & mask).rotate_left(bits_needed);
@@ -20,28 +25,26 @@ impl CPtr {
     }
 }
 
-pub struct CNode {
-
-}
+pub struct CNode {}
 
 struct Guard {
     offset: u32,
     size: u32,
-    value: u32
+    value: u32,
 }
 
-impl Guard {
-}
+impl Guard {}
 
 struct Translation {
     ptr: CPtr,
-    rem_bits: u32
+    rem_bits: u32,
 }
 
 impl Translation {
     pub fn read_bits(&mut self, num_bits: u32) -> Option<usize> {
-        if num_bits > self.rem_bits { None }
-        else {
+        if num_bits > self.rem_bits {
+            None
+        } else {
             let start_bit = CPtr::num_bits() - self.rem_bits;
             // generate a mask for the requested bits.
             let mask = 2usize.pow(num_bits) - 1;

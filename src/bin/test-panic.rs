@@ -17,10 +17,10 @@ pub extern "C" fn _start() -> ! {
 
 #[cfg(not(test))]
 #[panic_handler] // define a function that should be called on panic
-fn panic(
-    _info: &PanicInfo
-) -> ! {
+fn panic(_info: &PanicInfo) -> ! {
     serial_println!("ok");
-    unsafe { exit_qemu(); }
+    unsafe {
+        exit_qemu();
+    }
     loop {}
 }

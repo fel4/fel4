@@ -3,19 +3,19 @@ pub mod legacy_pic {
 
     const CMD_INIT: u8 = 0x11;
     const CMD_END_OF_INTERRUPT: u8 = 0x20;
-    const CMD_8086_MODE:u8 = 0x01;
+    const CMD_8086_MODE: u8 = 0x01;
     const CMD_READ_IRR: u8 = 0x0A;
     const CMD_READ_ISR: u8 = 0x0B;
 
     const PIC1_CMD: u16 = 0x20;
     const PIC1_DATA: u16 = 0x21;
-    const PIC2_CMD:u16 = 0xA0;
-    const PIC2_DATA:u16 = 0xA1;
+    const PIC2_CMD: u16 = 0xA0;
+    const PIC2_DATA: u16 = 0xA1;
 
     struct Pic {
         offset: u8,
         command: Port<u8>,
-        data: Port<u8>
+        data: Port<u8>,
     }
 
     impl Pic {
@@ -26,7 +26,9 @@ pub mod legacy_pic {
         fn is_valid(&mut self, interrupt_id: u8) -> bool {
             if self.handles_interrupt(interrupt_id) {
                 let idx = interrupt_id - self.offset;
-                if idx != 7 { return true ;} // "spurious" interrupts are always delivered on the lowest priority interrupt, ie the last one.
+                if idx != 7 {
+                    return true;
+                } // "spurious" interrupts are always delivered on the lowest priority interrupt, ie the last one.
                 let mask = 1 << 7;
                 self.isr() & mask != 0 // if the appropriate ISR bit isn't set, it's a spurious interrupt.
             } else {
@@ -54,7 +56,7 @@ pub mod legacy_pic {
     }
 
     pub struct ChainedPics {
-        pics: [Pic; 2]
+        pics: [Pic; 2],
     }
 
     impl ChainedPics {
@@ -64,20 +66,22 @@ pub mod legacy_pic {
                     Pic {
                         offset: offset1,
                         command: Port::<u8>::new(PIC1_CMD),
-                        data: Port::<u8>::new(PIC1_DATA)
+                        data: Port::<u8>::new(PIC1_DATA),
                     },
                     Pic {
                         offset: offset2,
                         command: Port::<u8>::new(PIC2_CMD),
-                        data: Port::<u8>::new(PIC2_DATA)
-                    }
-                ]
+                        data: Port::<u8>::new(PIC2_DATA),
+                    },
+                ],
             }
         }
 
         pub unsafe fn initialize(&mut self) {
             let mut wait_port = Port::<u8>::new(0x80);
-            let mut wait = || { wait_port.write(0); };
+            let mut wait = || {
+                wait_port.write(0);
+            };
 
             // save mask
             let mask1 = self.pics[0].data.read();
@@ -146,6 +150,4 @@ pub const PIC1_SPURIOUS_ID: u8 = PIC1_OFFSET + 7;
 pub const PIC2_SPURIOUS_ID: u8 = PIC2_OFFSET + 7;
 
 pub static PICS: spin::Mutex<ChainedPics> =
-    spin::Mutex::new(unsafe {
-        ChainedPics::new(PIC1_OFFSET, PIC2_OFFSET)
-    });
+    spin::Mutex::new(unsafe { ChainedPics::new(PIC1_OFFSET, PIC2_OFFSET) });

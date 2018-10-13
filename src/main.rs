@@ -13,14 +13,15 @@ extern crate x86_64;
 use core::panic::PanicInfo;
 use fel4::exit_qemu;
 use fel4::interrupts::{self, PICS};
-use x86_64::structures::idt::{ExceptionStackFrame,InterruptDescriptorTable};
+use x86_64::structures::idt::{ExceptionStackFrame, InterruptDescriptorTable};
 
 lazy_static! {
     static ref IDT: InterruptDescriptorTable = {
         let mut idt = InterruptDescriptorTable::new();
         idt.breakpoint.set_handler_fn(breakpoint_handler);
         unsafe {
-            idt.double_fault.set_handler_fn(double_fault_handler)
+            idt.double_fault
+                .set_handler_fn(double_fault_handler)
                 .set_stack_index(fel4::gdt::DOUBLE_FAULT_IST_INDEX);
         }
         idt[usize::from(interrupts::TIMER_INTERRUPT_ID)].set_handler_fn(timer_interrupt_handler);
@@ -38,22 +39,34 @@ extern "x86-interrupt" fn breakpoint_handler(stack_frame: &mut ExceptionStackFra
     println!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
 }
 
-extern "x86-interrupt" fn double_fault_handler(stack_frame: &mut ExceptionStackFrame, _error_code: u64) {
+extern "x86-interrupt" fn double_fault_handler(
+    stack_frame: &mut ExceptionStackFrame,
+    _error_code: u64,
+) {
     println!("EXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
-    loop{}
+    loop {}
 }
 
 extern "x86-interrupt" fn timer_interrupt_handler(_stack_frame: &mut ExceptionStackFrame) {
     print!(".");
-    unsafe { PICS.lock().notify_end_of_interrupt(interrupts::TIMER_INTERRUPT_ID); }
+    unsafe {
+        PICS.lock()
+            .notify_end_of_interrupt(interrupts::TIMER_INTERRUPT_ID);
+    }
 }
 
 extern "x86-interrupt" fn pic1_spurious_handler(_stack_frame: &mut ExceptionStackFrame) {
-    unsafe { PICS.lock().notify_end_of_interrupt(interrupts::PIC1_SPURIOUS_ID); }
+    unsafe {
+        PICS.lock()
+            .notify_end_of_interrupt(interrupts::PIC1_SPURIOUS_ID);
+    }
 }
 
 extern "x86-interrupt" fn pic2_spurious_handler(_stack_frame: &mut ExceptionStackFrame) {
-    unsafe { PICS.lock().notify_end_of_interrupt(interrupts::PIC2_SPURIOUS_ID); }
+    unsafe {
+        PICS.lock()
+            .notify_end_of_interrupt(interrupts::PIC2_SPURIOUS_ID);
+    }
 }
 
 #[cfg(not(test))]
@@ -64,7 +77,9 @@ pub extern "C" fn _start() -> ! {
 
     fel4::gdt::init();
     init_idt();
-    unsafe { PICS.lock().initialize(); }
+    unsafe {
+        PICS.lock().initialize();
+    }
 
     x86_64::instructions::interrupts::enable();
 
@@ -74,8 +89,6 @@ pub extern "C" fn _start() -> ! {
 
 #[cfg(not(test))]
 #[panic_handler] // define a function that should be called on panic
-fn panic(
-    _info: &PanicInfo
-) -> ! {
+fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }

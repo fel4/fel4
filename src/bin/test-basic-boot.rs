@@ -14,14 +14,14 @@ use fel4::exit_qemu;
 pub extern "C" fn _start() -> ! {
     serial_println!("ok");
 
-    unsafe { exit_qemu(); }
+    unsafe {
+        exit_qemu();
+    }
     loop {}
 }
 
 #[cfg(not(test))]
 #[panic_handler] // define a function that should be called on panic
-fn panic(
-    _info: &PanicInfo
-) -> ! {
+fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
