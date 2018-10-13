@@ -25,9 +25,7 @@ impl CPtr {
     }
 }
 
-enum Badge {
-    None,
-}
+pub struct CapData(usize);
 
 /// defines guard bits for a particular CNode
 struct Guard {
@@ -40,7 +38,7 @@ impl Guard {}
 pub struct CNode {
     guard: Guard,
     radix: u32,
-    badge: Badge,
+    badge: CapData, // does this need to be here?
 }
 
 impl CNode {
