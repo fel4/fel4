@@ -25,8 +25,7 @@ impl CPtr {
     }
 }
 
-pub struct CNode {}
-
+/// defines guard bits for a particular CNode
 struct Guard {
     offset: u32,
     size: u32,
@@ -34,6 +33,67 @@ struct Guard {
 }
 
 impl Guard {}
+
+pub struct CNode {
+    badge: bool, // TODO :: correct type
+    guard: Guard,
+}
+
+impl CNode {
+    /// seL4_CNode_CancelBadgedSends() cancels any outstanding sends that use the same
+    /// badge and object as the specified capability.
+    pub fn cancel_badged_sends() {
+        unimplemented!();
+    }
+    /// seL4_CNode_Copy() is similar to seL4_CNode_Mint(), but the newly created capability
+    /// has the same badge and guard as the original.
+    pub fn copy() {
+        unimplemented!();
+    }
+    /// seL4_CNode_Delete() removes a capability from the specified slot.
+    pub fn delete() {
+        unimplemented!();
+    }
+    /// seL4_CNode_Mint() creates a new capability in a specified CNode slot from an existing
+    /// capability. The newly created capability may have fewer rights than the original
+    /// and a different guard (see Section 3.3.1). seL4_CNode_Mint() can also create a
+    /// badged capability (see Section 4.2.1) from an unbadged one.
+    pub fn mint() {
+        unimplemented!();
+    }
+    /// seL4_CNode_Move() moves a capability between two specified capability slots. You
+    /// cannot move a capability to the slot in which it is currently.
+    pub fn move_cnode() {
+        unimplemented!();
+    } // move is a keyword in rust.
+    /// seL4_CNode_Mutate() can move a capability similarly to seL4_CNode_Move() and also
+    /// reduce its rights similarly to seL4_CNode_Mint(), although without an original
+    /// copy remaining.
+    pub fn mutate() {
+        unimplemented!();
+    }
+    /// seL4_CNode_Revoke() is equivalent to calling seL4_CNode_Delete() on each derived
+    /// child of the specified capability. It has no eect on the capability itself, except in
+    /// very specific circumstances outlined in Section 3.2.
+    pub fn revoke() {
+        unimplemented!();
+    }
+    /// seL4_CNode_Rotate() moves two capabilities between three specified capability slots.
+    /// It is essentially two seL4_CNode_Move() invocations: one from the second specified
+    /// slot to the first, and one from the third to the second. The first and third
+    /// specified slots may be the same, in which case the capability in it is swapped with
+    /// the capability in the second slot. The method is atomic; either both or neither
+    /// capabilities are moved.
+    pub fn rotate() {
+        unimplemented!();
+    }
+    /// seL4_CNode_SaveCaller() moves a kernel-generated reply capability of the current
+    /// thread from the special TCB slot it was created in, into the designated CSpace
+    /// slot.
+    pub fn save_caller() {
+        unimplemented!();
+    }
+}
 
 struct Translation {
     ptr: CPtr,
