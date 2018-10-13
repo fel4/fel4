@@ -10,7 +10,9 @@ extern crate fel4;
 extern crate lazy_static;
 extern crate x86_64;
 
+#[cfg_attr(test, allow(unused_imports))]
 use core::panic::PanicInfo;
+#[cfg_attr(test, allow(unused_imports))]
 use fel4::exit_qemu;
 use fel4::interrupts::{self, PICS};
 use x86_64::structures::idt::{ExceptionStackFrame, InterruptDescriptorTable};

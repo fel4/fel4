@@ -25,9 +25,12 @@ impl CPtr {
     }
 }
 
+enum Badge {
+    None,
+}
+
 /// defines guard bits for a particular CNode
 struct Guard {
-    offset: u32,
     size: u32,
     value: u32,
 }
@@ -35,8 +38,9 @@ struct Guard {
 impl Guard {}
 
 pub struct CNode {
-    badge: bool, // TODO :: correct type
     guard: Guard,
+    radix: u32,
+    badge: Badge,
 }
 
 impl CNode {

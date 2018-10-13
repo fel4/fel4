@@ -1,6 +1,8 @@
 #![feature(const_fn)]
 #![no_std] // don't link the Rust standard library
 
+#[macro_use]
+extern crate bitfield;
 extern crate bootloader_precompiled;
 #[macro_use]
 extern crate lazy_static;
@@ -14,9 +16,9 @@ extern crate array_init;
 #[cfg(test)]
 extern crate std;
 
-pub mod caps;
 pub mod gdt;
 pub mod interrupts;
+pub mod l4;
 pub mod serial;
 pub mod vga_buffer;
 
